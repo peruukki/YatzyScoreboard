@@ -29,7 +29,7 @@
       return '<th>' + header + '</th>';
     });
     var emptyRowCells = _(columnHeaders).drop(1).map(function (header) {
-      return '<td>';
+      return '<td><input type="number" min="0" max="80" class="score"></input></td>';
     }).valueOf();
 
     headerElements.forEach(function (headerElement) {
