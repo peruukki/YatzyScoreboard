@@ -1,3 +1,40 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1rem;
+  line-height: 1.5rem;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
 table {
   float: left;
+  border-spacing: 0;
+}
+
+thead th {
+  border-bottom: 1px solid #aaa;
+}
+tbody th {
+  text-align: left;
+}
+tbody tr:last-child th, tbody tr:last-child td {
+  border-top: 1px solid #aaa;
+}
+thead th, tbody td {
+  padding-left: 1rem;
+}
+
+.scoreboard-container {
+  overflow: hidden;
+}
+
+#upper-section {
+  margin-right: 3rem;
+  margin-bottom: 1rem;
 }
