@@ -21,7 +21,7 @@
     $(tableHeadElement).append($('<tr>')
       .append('<th>')
       .append(columnHeaders.map(function (header) {
-        return '<th>' + header + '</th>';
+        return '<th><input type="text" size="5" placeholder="' + header + '"></input></th>';
       })));
   }
 
