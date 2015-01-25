@@ -10,6 +10,8 @@
   $(document).ready(function () {
     addTableRows('#upper-section', COLUMN_HEADERS, ROW_HEADERS_UPPER_SECTION);
     addTableRows('#lower-section', COLUMN_HEADERS, ROW_HEADERS_LOWER_SECTION);
+
+    observePlayerNameInput();
   });
 
   function addTableRows(tableSelector, columnHeaders, rowHeaders) {
@@ -38,6 +40,25 @@
         .append(headerElement)
         .append(emptyRowCells));
     });
+  }
+
+  function observePlayerNameInput() {
+    COLUMN_HEADERS.forEach(function (header, index) {
+      var upperSectionElement = $('#upper-section thead input')[index];
+      var lowerSectionElement = $('#lower-section thead input')[index];
+
+      bindNameData(upperSectionElement, lowerSectionElement);
+      bindNameData(lowerSectionElement, upperSectionElement);
+    });
+  }
+
+  function bindNameData(sourceElement, targetElement) {
+    Rx.Observable.fromEvent(sourceElement, 'keyup')
+      .map(function (e) { return e.target.value; })
+      .distinctUntilChanged()
+      .subscribe(function (text) {
+        targetElement.value = text;
+      });
   }
 
 })();
