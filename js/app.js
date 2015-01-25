@@ -7,12 +7,15 @@
   var ROW_HEADERS_LOWER_SECTION = [ 'Pair', 'Two pairs', 'Three of a kind', 'Four of a kind', 'Five of a kind',
                                     'Small straight', 'Large straight', 'Full house', 'Chance', 'Yatzy', 'TOTAL' ];
 
+
   $(document).ready(function () {
     addTableRows('#upper-section', COLUMN_HEADERS, ROW_HEADERS_UPPER_SECTION);
     addTableRows('#lower-section', COLUMN_HEADERS, ROW_HEADERS_LOWER_SECTION);
 
     observePlayerNameInput();
+    observeScoreInput();
   });
+
 
   function addTableRows(tableSelector, columnHeaders, rowHeaders) {
     addColumnHeaderRow(tableSelector + ' thead', columnHeaders);
@@ -35,7 +38,7 @@
       return '<td><input type="number" min="0" max="80" class="score"></input></td>';
     });
     var totalScoreCells = columnHeaders.map(function (header) {
-      return '<td><input type="number" min="0" class="total"></input></td>';
+      return '<td><input type="number" min="0" class="total" readonly></input></td>';
     });
 
     _(headerElements).take(headerElements.length - 1).forEach(function (headerElement) {
@@ -47,6 +50,7 @@
       .append(_(headerElements).last())
       .append(totalScoreCells));
   }
+
 
   function observePlayerNameInput() {
     COLUMN_HEADERS.forEach(function (header, index) {
@@ -65,6 +69,62 @@
       .subscribe(function (text) {
         targetElement.value = text;
       });
+  }
+
+
+  function observeScoreInput() {
+    var upperSectionTotalObservables = bindScoreData('#upper-section');
+    bindScoreData('#lower-section', upperSectionTotalObservables);
+  }
+
+  function bindScoreData(tableSelector, externalObservableByColumn) {
+    var observablesFromTable = getInputObservablesByTableColumn(tableSelector);
+    var allObservablesByColumn = mergeObservablesByColumn(observablesFromTable, externalObservableByColumn);
+
+    var totalObservablesByColumn = allObservablesByColumn.map(function (observables, index) {
+      return Rx.Observable.combineLatest(observables, function () {
+        return _(arguments).reduce(function (sum, value) { return sum + value; })
+          .valueOf();
+      });
+    });
+    bindTotalData(tableSelector, totalObservablesByColumn);
+
+    return totalObservablesByColumn;
+  }
+
+  function bindTotalData(tableSelector, totalObservablesByColumn) {
+    totalObservablesByColumn.forEach(function (observable, index) {
+      observable.subscribe(function (total) {
+        $(tableSelector + ' input.total')[index].value = total;
+      });
+    });
+  }
+
+  function getInputObservablesByTableColumn(tableSelector) {
+    var inputsByColumn = _($(tableSelector + ' input.score').get())
+      .groupBy(function (value, index) { return index % COLUMN_HEADERS.length; })
+      .valueOf();
+    var inputObservablesByColumn = COLUMN_HEADERS.map(function (header, columnIndex) {
+      return inputsByColumn[columnIndex].map(createObservableForNumberInputField);
+    });
+    return inputObservablesByColumn;
+  }
+
+  function mergeObservablesByColumn(observables, extraObservableByColumn) {
+    if (extraObservableByColumn && extraObservableByColumn.length > 0) {
+      return observables.map(function (columnObservables, columnIndex) {
+        return columnObservables.concat([extraObservableByColumn[columnIndex]]);
+      });
+    } else {
+      return observables;
+    }
+  }
+
+  function createObservableForNumberInputField(inputElement) {
+    return Rx.Observable.just(0)
+      .merge(Rx.Observable.fromEvent(inputElement, 'input')
+        .map(function (e) { return +e.target.value; })
+        .distinctUntilChanged());
   }
 
 })();
