@@ -31,15 +31,21 @@
     var headerElements = rowHeaders.map(function (header) {
       return '<th>' + header + '</th>';
     });
-    var emptyRowCells = columnHeaders.map(function (header) {
+    var scoreInputCells = columnHeaders.map(function (header) {
       return '<td><input type="number" min="0" max="80" class="score"></input></td>';
     });
+    var totalScoreCells = columnHeaders.map(function (header) {
+      return '<td><input type="number" min="0" class="total"></input></td>';
+    });
 
-    headerElements.forEach(function (headerElement) {
+    _(headerElements).take(headerElements.length - 1).forEach(function (headerElement) {
       $(tableBodyElement).append($('<tr>')
         .append(headerElement)
-        .append(emptyRowCells));
+        .append(scoreInputCells));
     });
+    $(tableBodyElement).append($('<tr>')
+      .append(_(headerElements).last())
+      .append(totalScoreCells));
   }
 
   function observePlayerNameInput() {

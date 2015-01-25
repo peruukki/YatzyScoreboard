@@ -42,7 +42,7 @@ input {
 input.player {
   text-align: center;
 }
-input.score {
+input.score, input.total {
   text-align: right;
 }
 
