@@ -1,6 +1,6 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   max-width: 40rem;
   margin: 0 auto;
@@ -9,7 +9,7 @@ body {
 }
 
 h1 {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 table {
@@ -34,8 +34,15 @@ thead th, tbody td {
   overflow: hidden;
 }
 
+input {
+  font-size: 1rem;
+  width: 4rem;
+}
+
+input.player {
+  text-align: center;
+}
 input.score {
-  width: 3rem;
   text-align: right;
 }
 
