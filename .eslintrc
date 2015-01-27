@@ -1,0 +1,15 @@
+{
+  "env": {
+    "browser": true,
+    "jquery": true
+  },
+  "globals": {
+    "_": false,
+    "Rx": false
+  },
+  "rules": {
+    "global-strict": [2, "always"],
+    "no-use-before-define": [2, "nofunc"],
+    "quotes": [2, "single"]
+  }
+}

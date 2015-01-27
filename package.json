@@ -1,0 +1,27 @@
+{
+  "name": "YatzyScoreboard",
+  "version": "1.0.0",
+  "description": "Keep track of your Yatzy game scores in the browser.",
+  "main": "index.html",
+  "scripts": {
+    "test": "eslint js/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peruukki/YatzyScoreboard.git"
+  },
+  "keywords": [
+    "Yatzy",
+    "scoreboard",
+    "RxJS"
+  ],
+  "author": "Harri Lehtola",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peruukki/YatzyScoreboard/issues"
+  },
+  "homepage": "https://github.com/peruukki/YatzyScoreboard",
+  "devDependencies": {
+    "eslint": "^0.13.0"
+  }
+}
