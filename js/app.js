@@ -34,10 +34,10 @@
     var headerElements = rowHeaders.map(function (header) {
       return '<th>' + header + '</th>';
     });
-    var scoreInputCells = columnHeaders.map(function (header) {
+    var scoreInputCells = columnHeaders.map(function () {
       return '<td><input type="number" min="0" max="80" class="score"></input></td>';
     });
-    var totalScoreCells = columnHeaders.map(function (header) {
+    var totalScoreCells = columnHeaders.map(function () {
       return '<td><input type="number" min="0" class="total" readonly></input></td>';
     });
 
@@ -81,7 +81,7 @@
     var observablesFromTable = getInputObservablesByTableColumn(tableSelector);
     var allObservablesByColumn = mergeObservablesByColumn(observablesFromTable, externalObservableByColumn);
 
-    var totalObservablesByColumn = allObservablesByColumn.map(function (observables, index) {
+    var totalObservablesByColumn = allObservablesByColumn.map(function (observables) {
       return Rx.Observable.combineLatest(observables, function () {
         return _(arguments).reduce(function (sum, value) { return sum + value; })
           .valueOf();
