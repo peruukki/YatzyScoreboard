@@ -1,20 +1,27 @@
-body {
+html {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-size: 36px;
   color: #333;
-  max-width: 40rem;
-  margin: 0 auto;
-  padding: 1rem;
-  line-height: 1.5rem;
+  line-height: 1;
 }
 
-h1 {
-  margin-bottom: 3rem;
+body {
+  margin: 0 auto;
+  padding: 0.25rem;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 table {
-  float: left;
   border-spacing: 0;
+}
+
+th, td {
+  text-align: right;
 }
 
 thead th {
@@ -26,9 +33,6 @@ tbody th {
 tbody tr:last-child th, tbody tr:last-child td {
   border-top: 1px solid #aaa;
 }
-thead th, tbody td {
-  padding-left: 1rem;
-}
 
 .scoreboard-container {
   overflow: hidden;
@@ -37,6 +41,7 @@ thead th, tbody td {
 input {
   font-size: 1rem;
   width: 4rem;
+  height: 100%;
 }
 
 input.player {
@@ -47,6 +52,109 @@ input.score, input.total {
 }
 
 #upper-section {
-  margin-right: 3rem;
-  margin-bottom: 1rem;
+  float: left;
+  width: 40%;
+}
+
+#lower-section {
+  float: right;
+  width: 53.5%;
+}
+
+@media screen and (max-width: 1150px)
+{
+  html {
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 1050px)
+{
+  html {
+    font-size: 28px;
+  }
+}
+
+@media screen and (max-width: 900px)
+{
+  html {
+    font-size: 26px;
+  }
+}
+
+@media screen and (max-width: 850px)
+{
+  html {
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 800px)
+{
+  html {
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 750px)
+{
+  html {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 650px)
+{
+  html {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 599px)
+{
+  html {
+    font-size: 28px;
+  }
+  #upper-section {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  #lower-section {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 539px)
+{
+  html {
+    font-size: 26px;
+  }
+}
+
+@media screen and (max-width: 479px)
+{
+  html {
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 449px)
+{
+  html {
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 399px)
+{
+  html {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 359px)
+{
+  html {
+    font-size: 18px;
+  }
 }
