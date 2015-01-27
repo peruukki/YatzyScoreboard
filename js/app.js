@@ -123,7 +123,7 @@
   function createObservableForNumberInputField(inputElement) {
     return Rx.Observable.just(0)
       .merge(Rx.Observable.fromEvent(inputElement, 'input')
-        .map(function (e) { return +e.target.value; })
+        .map(function (e) { return +e.target.value || 0; })
         .distinctUntilChanged());
   }
 
