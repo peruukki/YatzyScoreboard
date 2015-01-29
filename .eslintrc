@@ -9,6 +9,7 @@
   },
   "rules": {
     "global-strict": [2, "always"],
+    "new-cap": [2, { "capIsNew": false }],
     "no-use-before-define": [2, "nofunc"],
     "quotes": [2, "single"]
   }
