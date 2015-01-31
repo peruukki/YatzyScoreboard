@@ -20,8 +20,11 @@ table {
   border-spacing: 0;
 }
 
-th, td {
+th.player-1, td.player-1 {
   text-align: right;
+}
+th.player-2, td.player-2 {
+  text-align: left;
 }
 
 thead th {
@@ -38,9 +41,17 @@ tbody tr:last-child th, tbody tr:last-child td {
   overflow: hidden;
 }
 
+.score-diff {
+  display: inline-block;
+  font-size: 0.6rem;
+  text-align: center;
+  color: green;
+  width: 1.5rem;
+}
+
 input {
   font-size: 1rem;
-  width: 4rem;
+  width: 3.5rem;
   height: 100%;
 }
 
@@ -53,15 +64,15 @@ input.score, input.total {
 
 #upper-section {
   float: left;
-  width: 40%;
+  width: 44%;
 }
 
 #lower-section {
   float: right;
-  width: 53.5%;
+  width: 55%;
 }
 
-@media screen and (max-width: 1150px)
+@media screen and (max-width: 1230px)
 {
   html {
     font-size: 30px;
@@ -75,42 +86,42 @@ input.score, input.total {
   }
 }
 
-@media screen and (max-width: 900px)
+@media screen and (max-width: 980px)
 {
   html {
     font-size: 26px;
   }
 }
 
-@media screen and (max-width: 850px)
+@media screen and (max-width: 900px)
 {
   html {
     font-size: 24px;
   }
 }
 
-@media screen and (max-width: 800px)
+@media screen and (max-width: 850px)
 {
   html {
     font-size: 22px;
   }
 }
 
-@media screen and (max-width: 750px)
+@media screen and (max-width: 770px)
 {
   html {
     font-size: 20px;
   }
 }
 
-@media screen and (max-width: 650px)
+@media screen and (max-width: 700px)
 {
   html {
     font-size: 18px;
   }
 }
 
-@media screen and (max-width: 599px)
+@media screen and (max-width: 630px)
 {
   html {
     font-size: 28px;
@@ -145,16 +156,23 @@ input.score, input.total {
   }
 }
 
-@media screen and (max-width: 399px)
+@media screen and (max-width: 429px)
 {
   html {
     font-size: 20px;
   }
 }
 
-@media screen and (max-width: 359px)
+@media screen and (max-width: 389px)
 {
   html {
     font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 349px)
+{
+  html {
+    font-size: 16px;
   }
 }
