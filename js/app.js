@@ -173,21 +173,27 @@
       // Show score difference next to bigger score cell
       rowScoreChangeObservable.filter(function (change) { return change.score1 > change.score2; })
         .subscribe(function (change) {
-          $(rowElement).find('.score-diff.player-1').html('+' + (change.score1 - change.score2));
+          $(rowElement).find('.score-diff.player-1')
+            .addClass('visible')
+            .html('+' + (change.score1 - change.score2));
         });
       rowScoreChangeObservable.filter(function (change) { return change.score2 > change.score1; })
         .subscribe(function (change) {
-          $(rowElement).find('.score-diff.player-2').html('+' + (change.score2 - change.score1));
+          $(rowElement).find('.score-diff.player-2')
+            .addClass('visible')
+            .html('+' + (change.score2 - change.score1));
         });
 
-      // Clear score difference cell next to score cell that is smaller or equal to the other one
+      // Hide score difference cell next to score cell that is smaller or equal to the other one
       rowScoreChangeObservable.filter(function (change) { return change.score1 <= change.score2; })
         .subscribe(function () {
-          $(rowElement).find('.score-diff.player-1').html('');
+          $(rowElement).find('.score-diff.player-1')
+            .removeClass('visible');
         });
       rowScoreChangeObservable.filter(function (change) { return change.score2 <= change.score1; })
         .subscribe(function () {
-          $(rowElement).find('.score-diff.player-2').html('');
+          $(rowElement).find('.score-diff.player-2')
+            .removeClass('visible');
         });
     });
   }
