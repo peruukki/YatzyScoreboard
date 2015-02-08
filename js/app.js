@@ -204,7 +204,8 @@
   function observeElementsHiddenAfterTransition() {
     $('.score-diff').each(function (index, element) {
       Rx.Observable.fromEvent(element, 'transitionend')
-        .filter(function (e) { return e.propertyName === 'opacity' && !$(e.target).hasClass('visible'); })
+        .filter(function (e) { return e.propertyName === 'opacity'; })
+        .filter(function (e) { return !$(e.target).hasClass('visible'); })
         .subscribe(function (e) { $(e.target).html(''); });
     });
   }
