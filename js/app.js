@@ -26,6 +26,8 @@
     observePlayerNameInput();
     var scoreObservables = observeScoreInput();
     observeScoreDifferences(scoreObservables[0], scoreObservables[1]);
+
+    observeElementsHiddenAfterTransition();
   });
 
 
@@ -195,6 +197,15 @@
           $(rowElement).find('.score-diff.player-2')
             .removeClass('visible');
         });
+    });
+  }
+
+
+  function observeElementsHiddenAfterTransition() {
+    $('.score-diff').each(function (index, element) {
+      Rx.Observable.fromEvent(element, 'transitionend')
+        .filter(function (e) { return e.propertyName === 'opacity' && !$(e.target).hasClass('visible'); })
+        .subscribe(function (e) { $(e.target).html(''); });
     });
   }
 
