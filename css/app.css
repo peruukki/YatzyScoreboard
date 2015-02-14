@@ -57,6 +57,12 @@ tbody tr:last-child th, tbody tr:last-child td {
   opacity: 1;
 }
 
+.die {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 3px 3px 0 0;
+}
+
 input {
   font-size: 1rem;
   width: 3.5rem;
@@ -72,12 +78,12 @@ input.score, input.total {
 
 #upper-section {
   float: left;
-  width: 44%;
+  width: 42%;
 }
 
 #lower-section {
   float: right;
-  width: 55%;
+  width: 57%;
 }
 
 @media screen and (max-width: 1230px)

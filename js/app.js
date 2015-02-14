@@ -5,16 +5,18 @@
   var COLUMN_HEADERS = [ 'Name', 'Name' ];
 
   var UPPER_SECTION_INPUTS = [
-    Input('Ones', 1, 5), Input('Twos', 2, 10), Input('Threes', 3, 15),
-    Input('Fours', 4, 20), Input('Fives', 5, 25), Input('Sixes', 6, 30)
+    Input('Ones', [1], 1, 5), Input('Twos', [2], 2, 10), Input('Threes', [3], 3, 15),
+    Input('Fours', [4], 4, 20), Input('Fives', [5], 5, 25), Input('Sixes', [6], 6, 30)
   ];
   var UPPER_SECTION_TOTAL_LABEL = 'Total';
 
   var LOWER_SECTION_INPUTS = [
-    Input('Pair', 2, 12), Input('Two pairs', 2, 24),
-    Input('Three of a kind', 3, 18), Input('Four of a kind', 4, 24), Input('Five of a kind', 5, 30),
-    Input('Small straight', 15, 15), Input('Large straight', 20, 20),
-    Input('Full house', 1, 30), Input('Chance', 1, 30), Input('Yatzy', 5, 80)
+    Input('Pair', [1, 1], 2, 12), Input('Two pairs', [1, 1, 2, 2], 2, 24),
+    Input('Three of a kind', [3, 3, 3], 3, 18), Input('Four of a kind', [4, 4, 4, 4], 4, 24),
+    Input('Five of a kind', [5, 5, 5, 5, 5], 5, 30),
+    Input('Small straight', [1, 2, 3, 4, 5], 15, 15), Input('Large straight', [2, 3, 4, 5, 6], 20, 20),
+    Input('Full house', [3, 3, 3, 2, 2], 1, 30), Input('Chance', [1, 2, 5, 5, 6], 1, 30),
+    Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
   ];
   var LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
 
@@ -31,8 +33,8 @@
   });
 
 
-  function Input(label, step, max) {
-    return { label: label, step: step, max: max };
+  function Input(label, dice, step, max) {
+    return { label: label, dice: dice, step: step, max: max };
   }
 
   function RowScoreChange(score1, score2) {
@@ -60,9 +62,12 @@
       var input = '<input type="number" min="0" max="' + header.max + '" step="' + header.step + '" class="score"></input>';
       var score1Diff = '<span class="score-diff player-1"></span>';
       var score2Diff = '<span class="score-diff player-2"></span>';
+      var dice = header.dice.map(function (die) {
+        return '<img class="die" title="' + header.label + '" src=svg/' + die + '.svg></img>';
+      }).join('');
 
       $(tableBodyElement).append($('<tr>')
-        .append('<th>' + header.label + '</th>')
+        .append('<th>' + dice + '</th>')
         .append('<td class="player-1">' + score1Diff + input + '</td>')
         .append('<td class="player-2">' + input + score2Diff + '</td>'));
     });
