@@ -184,33 +184,42 @@
           function (score1, score2) { return RowScoreChange(score1, score2); }
         );
 
+        var score1MinusScore2 = function (change) { return change.score1 - change.score2; };
+        var score2MinusScore1 = function (change) { return change.score2 - change.score1; };
+        var isScore1Bigger = function (change) { return score1MinusScore2(change) > 0; };
+        var isScore2Bigger = function (change) { return score2MinusScore1(change) > 0; };
+        var not = function (comparisonFunc) {
+          return function (change) { return !comparisonFunc(change); };
+        };
+
         // Show score difference next to bigger score cell
-        rowScoreChangeObservable.filter(function (change) { return change.score1 > change.score2; })
-          .subscribe(function (change) {
-            $(rowElement).find('.score-diff.player-1').slice(pairIndex, pairIndex + 1)
-              .addClass('visible')
-              .html('+' + (change.score1 - change.score2));
-          });
-        rowScoreChangeObservable.filter(function (change) { return change.score2 > change.score1; })
-          .subscribe(function (change) {
-            $(rowElement).find('.score-diff.player-2').slice(pairIndex, pairIndex + 1)
-              .addClass('visible')
-              .html('+' + (change.score2 - change.score1));
-          });
+        rowScoreChangeObservable.filter(isScore1Bigger)
+          .subscribe(showScoreDifference(rowElement, '.score-diff.player-1', pairIndex, score1MinusScore2));
+        rowScoreChangeObservable.filter(isScore2Bigger)
+          .subscribe(showScoreDifference(rowElement, '.score-diff.player-2', pairIndex, score2MinusScore1));
 
         // Hide score difference cell next to score cell that is smaller or equal to the other one
-        rowScoreChangeObservable.filter(function (change) { return change.score1 <= change.score2; })
-          .subscribe(function () {
-            $(rowElement).find('.score-diff.player-1').slice(pairIndex, pairIndex + 1)
-              .removeClass('visible');
-          });
-        rowScoreChangeObservable.filter(function (change) { return change.score2 <= change.score1; })
-          .subscribe(function () {
-            $(rowElement).find('.score-diff.player-2').slice(pairIndex, pairIndex + 1)
-              .removeClass('visible');
-          });
+        rowScoreChangeObservable.filter(not(isScore1Bigger))
+          .subscribe(hideScoreDifference(rowElement, '.score-diff.player-1', pairIndex));
+        rowScoreChangeObservable.filter(not(isScore2Bigger))
+          .subscribe(hideScoreDifference(rowElement, '.score-diff.player-2', pairIndex));
       });
     });
+  }
+
+  function showScoreDifference(rowElement, diffElementSelector, diffElementIndex, scoreDiffCalculator) {
+    return function (change) {
+      $(rowElement).find(diffElementSelector).slice(diffElementIndex, diffElementIndex + 1)
+        .addClass('visible')
+        .html('+' + scoreDiffCalculator(change));
+    };
+  }
+
+  function hideScoreDifference(rowElement, diffElementSelector, diffElementIndex) {
+    return function () {
+      $(rowElement).find(diffElementSelector).slice(diffElementIndex, diffElementIndex + 1)
+        .removeClass('visible');
+    };
   }
 
 
