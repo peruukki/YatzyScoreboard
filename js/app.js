@@ -2,7 +2,7 @@
 
 (function () {
 
-  var COLUMN_HEADERS = [ 'Name', 'Name' ];
+  var COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
 
   var UPPER_SECTION_INPUTS = [
     Input('Ones', [1], 1, 5), Input('Twos', [2], 2, 10), Input('Threes', [3], 3, 15),
@@ -51,7 +51,7 @@
     $(tableHeadElement).append($('<tr>')
       .append('<th>')
       .append(columnHeaders.map(function (header, index) {
-        return '<th class="player-' + (index + 1) + '">' +
+        return '<th class="player-' + (index % 2 + 1) + '">' +
           '<input type="text" class="player" placeholder="' + header + '"></input></th>';
       })));
   }
@@ -62,25 +62,29 @@
       var input = '<input type="number" min="0" max="' + header.max + '" step="' + header.step + '" class="score"></input>';
       var score1Diff = '<span class="score-diff player-1"></span>';
       var score2Diff = '<span class="score-diff player-2"></span>';
+      var scoreCells = [ score1Diff + input, input + score2Diff ];
       var dice = header.dice.map(function (die) {
         return '<img class="die" title="' + header.label + '" src=svg/' + die + '.svg></img>';
       }).join('');
 
       $(tableBodyElement).append($('<tr>')
         .append('<th>' + dice + '</th>')
-        .append('<td class="player-1">' + score1Diff + input + '</td>')
-        .append('<td class="player-2">' + input + score2Diff + '</td>'));
+        .append(columnHeaders.map(function (columnHeader, index) {
+          return '<td class="player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>';
+        })));
     });
 
     // Total cells
     var totalScoreInput = '<input type="number" min="0" class="total" readonly></input>';
     var totalScore1Diff = '<span class="score-diff player-1"></span>';
     var totalScore2Diff = '<span class="score-diff player-2"></span>';
+    var totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
 
     $(tableBodyElement).append($('<tr>')
       .append('<th>' + totalLabel + '</th>')
-      .append('<td class="player-1">' + totalScore1Diff + totalScoreInput + '</td>')
-      .append('<td class="player-2">' + totalScoreInput + totalScore2Diff + '</td>'));
+      .append(columnHeaders.map(function (columnHeader, index) {
+        return '<td class="player-' + (index % 2 + 1) + '">' + totalScoreCells[index % 2] + '</td>';
+      })));
   }
 
 
@@ -171,37 +175,41 @@
 
   function bindRowScoreData(tableSelector, scoreObservables) {
     $(tableSelector + ' tbody tr').each(function (rowIndex, rowElement) {
-      var rowScoreChangeObservable = Rx.Observable.combineLatest(
-        scoreObservables[0][rowIndex],
-        scoreObservables[1][rowIndex],
-        function (score1, score2) { return RowScoreChange(score1, score2); }
-      );
+      var scoreObservablePairs = _(scoreObservables).groupBy(function (value, index) { return Math.floor(index / 2); })
+        .toArray();
+      scoreObservablePairs.forEach(function (scoreObservablePair, pairIndex) {
+        var rowScoreChangeObservable = Rx.Observable.combineLatest(
+          scoreObservablePair[0][rowIndex],
+          scoreObservablePair[1][rowIndex],
+          function (score1, score2) { return RowScoreChange(score1, score2); }
+        );
 
-      // Show score difference next to bigger score cell
-      rowScoreChangeObservable.filter(function (change) { return change.score1 > change.score2; })
-        .subscribe(function (change) {
-          $(rowElement).find('.score-diff.player-1')
-            .addClass('visible')
-            .html('+' + (change.score1 - change.score2));
-        });
-      rowScoreChangeObservable.filter(function (change) { return change.score2 > change.score1; })
-        .subscribe(function (change) {
-          $(rowElement).find('.score-diff.player-2')
-            .addClass('visible')
-            .html('+' + (change.score2 - change.score1));
-        });
+        // Show score difference next to bigger score cell
+        rowScoreChangeObservable.filter(function (change) { return change.score1 > change.score2; })
+          .subscribe(function (change) {
+            $(rowElement).find('.score-diff.player-1').slice(pairIndex, pairIndex + 1)
+              .addClass('visible')
+              .html('+' + (change.score1 - change.score2));
+          });
+        rowScoreChangeObservable.filter(function (change) { return change.score2 > change.score1; })
+          .subscribe(function (change) {
+            $(rowElement).find('.score-diff.player-2').slice(pairIndex, pairIndex + 1)
+              .addClass('visible')
+              .html('+' + (change.score2 - change.score1));
+          });
 
-      // Hide score difference cell next to score cell that is smaller or equal to the other one
-      rowScoreChangeObservable.filter(function (change) { return change.score1 <= change.score2; })
-        .subscribe(function () {
-          $(rowElement).find('.score-diff.player-1')
-            .removeClass('visible');
-        });
-      rowScoreChangeObservable.filter(function (change) { return change.score2 <= change.score1; })
-        .subscribe(function () {
-          $(rowElement).find('.score-diff.player-2')
-            .removeClass('visible');
-        });
+        // Hide score difference cell next to score cell that is smaller or equal to the other one
+        rowScoreChangeObservable.filter(function (change) { return change.score1 <= change.score2; })
+          .subscribe(function () {
+            $(rowElement).find('.score-diff.player-1').slice(pairIndex, pairIndex + 1)
+              .removeClass('visible');
+          });
+        rowScoreChangeObservable.filter(function (change) { return change.score2 <= change.score1; })
+          .subscribe(function () {
+            $(rowElement).find('.score-diff.player-2').slice(pairIndex, pairIndex + 1)
+              .removeClass('visible');
+          });
+      });
     });
   }
 

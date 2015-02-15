@@ -1,6 +1,6 @@
 html {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 36px;
+  font-size: 28px;
   color: #333;
   line-height: 1;
 }
@@ -46,7 +46,7 @@ tbody tr:last-child th, tbody tr:last-child td {
   font-size: 0.6rem;
   text-align: center;
   color: green;
-  width: 1.5rem;
+  width: 1.3rem;
   opacity: 0;
 
   -webkit-transition: opacity 1s ease-out;
@@ -65,11 +65,12 @@ tbody tr:last-child th, tbody tr:last-child td {
 
 input {
   font-size: 1rem;
-  width: 3.5rem;
+  width: 3rem;
   height: 100%;
 }
 
 input.player {
+  font-size: 0.7rem;
   text-align: center;
 }
 input.score, input.total {
@@ -78,64 +79,60 @@ input.score, input.total {
 
 #upper-section {
   float: left;
-  width: 42%;
+  width: 45%;
 }
 
 #lower-section {
   float: right;
-  width: 57%;
+  width: 53%;
 }
 
-@media screen and (max-width: 1230px)
-{
-  html {
-    font-size: 30px;
-  }
-}
-
-@media screen and (max-width: 1050px)
-{
-  html {
-    font-size: 28px;
-  }
-}
-
-@media screen and (max-width: 980px)
+@media screen and (max-width: 1350px)
 {
   html {
     font-size: 26px;
   }
 }
 
-@media screen and (max-width: 900px)
+@media screen and (max-width: 1250px)
 {
   html {
     font-size: 24px;
   }
 }
 
-@media screen and (max-width: 850px)
+@media screen and (max-width: 1170px)
 {
   html {
     font-size: 22px;
   }
 }
 
-@media screen and (max-width: 770px)
+@media screen and (max-width: 1080px)
 {
   html {
     font-size: 20px;
   }
+  input {
+    width: 2.5rem;
+  }
 }
 
-@media screen and (max-width: 700px)
+@media screen and (max-width: 1000px)
 {
   html {
     font-size: 18px;
   }
 }
 
-@media screen and (max-width: 630px)
+@media screen and (max-width: 920px)
+{
+  html {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 830px)
 {
   html {
     font-size: 28px;
@@ -149,44 +146,61 @@ input.score, input.total {
   }
 }
 
-@media screen and (max-width: 539px)
+@media screen and (max-width: 730px)
 {
   html {
     font-size: 26px;
   }
 }
 
-@media screen and (max-width: 479px)
+@media screen and (max-width: 680px)
 {
   html {
     font-size: 24px;
   }
 }
 
-@media screen and (max-width: 449px)
+@media screen and (max-width: 620px)
 {
   html {
     font-size: 22px;
   }
 }
 
-@media screen and (max-width: 429px)
+@media screen and (max-width: 580px)
 {
   html {
     font-size: 20px;
   }
+  input {
+    width: 2.5rem;
+  }
 }
 
-@media screen and (max-width: 389px)
+@media screen and (max-width: 500px)
 {
   html {
     font-size: 18px;
   }
 }
 
-@media screen and (max-width: 349px)
+@media screen and (max-width: 450px)
 {
   html {
     font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 450px)
+{
+  input {
+    width: 2rem;
+  }
+}
+
+@media screen and (max-width: 400px)
+{
+  html {
+    font-size: 14px;
   }
 }
