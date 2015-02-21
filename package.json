@@ -1,6 +1,6 @@
 {
   "name": "YatzyScoreboard",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Keep track of your Yatzy game scores in the browser.",
   "main": "index.html",
   "scripts": {
@@ -15,7 +15,7 @@
     "scoreboard",
     "RxJS"
   ],
-  "author": "Harri Lehtola",
+  "author": "Harri Lehtola <peruukki@hotmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/peruukki/YatzyScoreboard/issues"

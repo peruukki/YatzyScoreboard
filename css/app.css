@@ -26,6 +26,9 @@ th.player-1, td.player-1 {
 th.player-2, td.player-2 {
   text-align: left;
 }
+td.player-1, td.player-2 {
+  padding: 0;
+}
 
 thead th {
   border-bottom: 1px solid #aaa;
@@ -57,10 +60,15 @@ tbody tr:last-child th, tbody tr:last-child td {
   opacity: 1;
 }
 
+.description {
+  font-size: 0.5rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.2rem;
+}
 .die {
   width: 1.1rem;
   height: 1.1rem;
-  margin: 3px 3px 0 0;
+  margin-top: 0.1rem;
 }
 
 input {

@@ -68,7 +68,7 @@
       }).join('');
 
       $(tableBodyElement).append($('<tr>')
-        .append('<th>' + dice + '</th>')
+        .append('<th class="description">' + '<div>' + header.label + '</div>' + dice + '</th>')
         .append(columnHeaders.map(function (columnHeader, index) {
           return '<td class="player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>';
         })));
