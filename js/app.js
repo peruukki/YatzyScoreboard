@@ -11,11 +11,11 @@
   var UPPER_SECTION_TOTAL_LABEL = 'Total';
 
   var LOWER_SECTION_INPUTS = [
-    Input('Pair', [1, 1], 2, 12), Input('Two pairs', [1, 1, 2, 2], 2, 24),
-    Input('Three of a kind', [3, 3, 3], 3, 18), Input('Four of a kind', [4, 4, 4, 4], 4, 24),
-    Input('Five of a kind', [5, 5, 5, 5, 5], 5, 30),
+    Input('Pair', [6, 6], 2, 12), Input('Two pairs', [6, 6, 5, 5], 2, 24),
+    Input('Three of a kind', [6, 6, 6], 3, 18), Input('Four of a kind', [6, 6, 6, 6], 4, 24),
+    Input('Five of a kind', [6, 6, 6, 6, 6], 5, 30),
     Input('Small straight', [1, 2, 3, 4, 5], 15, 15), Input('Large straight', [2, 3, 4, 5, 6], 20, 20),
-    Input('Full house', [3, 3, 3, 2, 2], 1, 30), Input('Chance', [1, 2, 5, 5, 6], 1, 30),
+    Input('Full house', [6, 6, 6, 5, 5], 1, 30), Input('Chance', [6, 6, 5, 4, 3], 1, 30),
     Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
   ];
   var LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
