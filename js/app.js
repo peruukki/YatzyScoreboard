@@ -30,6 +30,8 @@
     observeScoreDifferences(scoreObservables[0], scoreObservables[1]);
 
     observeElementsHiddenAfterTransition();
+
+    addResetButtons('#lower-section', COLUMN_HEADERS.length / 2);
   });
 
 
@@ -70,7 +72,7 @@
       $(tableBodyElement).append($('<tr>')
         .append('<th class="description">' + '<div>' + header.label + '</div>' + dice + '</th>')
         .append(columnHeaders.map(function (columnHeader, index) {
-          return '<td class="player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>';
+          return '<td class="game-' + Math.floor(index / 2 + 1) + ' player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>';
         })));
     });
 
@@ -162,7 +164,7 @@
 
   function createObservableForNumberInputField(inputElement) {
     return Rx.Observable.just(0)
-      .merge(Rx.Observable.fromEvent(inputElement, 'input')
+      .merge(Rx.Observable.fromEvent($(inputElement), 'input')
         .map(function (e) { return +e.target.value || 0; })
         .distinctUntilChanged());
   }
@@ -229,6 +231,26 @@
         .filter(function (e) { return e.propertyName === 'opacity'; })
         .filter(function (e) { return !$(e.target).hasClass('visible'); })
         .subscribe(function (e) { $(e.target).html(''); });
+    });
+  }
+
+
+  function addResetButtons(tableSelector, buttonCount) {
+    // Add buttons
+    var buttonCells = _(buttonCount).times(function () {
+      return '<td class="reset" colspan="2"><a class="button no-select" title="Reset scores for this game">Reset</a></td>';
+    }).valueOf();
+    $(tableSelector + ' tbody').append($('<tr>')
+      .append('<th>')
+      .append(buttonCells));
+
+    // Add click event handlers to clear score inputs
+    $(tableSelector + ' td.reset .button').each(function (index, element) {
+      Rx.Observable.fromEvent(element, 'click')
+        .subscribe(function () {
+          $('td.game-' + (index + 1) + ' input.score').val('')
+            .trigger('input');
+        });
     });
   }
 
