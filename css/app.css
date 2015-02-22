@@ -36,7 +36,7 @@ thead th {
 tbody th {
   text-align: left;
 }
-tbody tr:last-child th, tbody tr:last-child td {
+tbody tr.total th, tbody tr.total td {
   border-top: 1px solid #aaa;
 }
 

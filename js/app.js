@@ -80,7 +80,7 @@
     var totalScore2Diff = '<span class="score-diff player-2"></span>';
     var totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
 
-    $(tableBodyElement).append($('<tr>')
+    $(tableBodyElement).append($('<tr class="total">')
       .append('<th>' + totalLabel + '</th>')
       .append(columnHeaders.map(function (columnHeader, index) {
         return '<td class="player-' + (index % 2 + 1) + '">' + totalScoreCells[index % 2] + '</td>';
