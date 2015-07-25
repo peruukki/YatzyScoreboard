@@ -4,6 +4,7 @@
   "description": "Keep track of your Yatzy game scores in the browser.",
   "main": "index.html",
   "scripts": {
+    "build": "mkdir -p js/build && babel -o js/build/app.js js/app.js",
     "test": "eslint js/app.js"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/peruukki/YatzyScoreboard",
   "devDependencies": {
+    "babel": "^5.8.5",
     "eslint": "^0.24.1"
   }
 }
