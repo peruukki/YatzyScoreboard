@@ -102,7 +102,11 @@
 
     var totalObservablesByColumn = allObservablesByColumn.map(function (observables) {
       return Rx.Observable.combineLatest(observables, function () {
-        return _(arguments).reduce(function (sum, value) {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return _(args).reduce(function (sum, value) {
           return sum + value;
         }).valueOf();
       });
