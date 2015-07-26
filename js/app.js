@@ -45,34 +45,33 @@
 
 
   function addTableRows(tableSelector, columnHeaders, rowHeaders, totalLabel) {
-    addColumnHeaderRow(tableSelector + ' thead', columnHeaders);
-    addBodyRows(tableSelector + ' tbody', columnHeaders, rowHeaders, totalLabel);
+    addColumnHeaderRow(`${tableSelector} thead`, columnHeaders);
+    addBodyRows(`${tableSelector} tbody`, columnHeaders, rowHeaders, totalLabel);
   }
 
   function addColumnHeaderRow(tableHeadElement, columnHeaders) {
     $(tableHeadElement).append($('<tr>')
       .append('<th>')
       .append(columnHeaders.map((header, index) =>
-        '<th class="player-' + (index % 2 + 1) + '">' +
-          '<input type="text" class="player" placeholder="' + header + '"></input></th>'
+        `<th class="player-${index % 2 + 1}"><input type="text" class="player" placeholder="${header}"></input></th>`
       )));
   }
 
   function addBodyRows(tableBodyElement, columnHeaders, rowHeaders, totalLabel) {
     // Score input cells
     rowHeaders.forEach(header => {
-      const input = '<input type="number" min="0" max="' + header.max + '" step="' + header.step + '" class="score"></input>';
+      const input = `<input type="number" min="0" max="${header.max}" step="${header.step}" class="score"></input>`;
       const score1Diff = '<span class="score-diff player-1"></span>';
       const score2Diff = '<span class="score-diff player-2"></span>';
       const scoreCells = [ score1Diff + input, input + score2Diff ];
       const dice = header.dice.map(die =>
-        '<img class="die" title="' + header.label + '" src=svg/' + die + '.svg></img>'
+        `<img class="die" title="${header.label}" src=svg/${die}.svg></img>`
       ).join('');
 
       $(tableBodyElement).append($('<tr>')
-        .append('<th class="description">' + '<div>' + header.label + '</div>' + dice + '</th>')
+        .append(`<th class="description"><div>${header.label}</div>${dice}</th>`)
         .append(columnHeaders.map((columnHeader, index) =>
-          '<td class="game-' + Math.floor(index / 2 + 1) + ' player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>'
+          `<td class="game-${Math.floor(index / 2 + 1)} player-${index % 2 + 1}">${scoreCells[index % 2]}</td>`
         )));
     });
 
@@ -83,9 +82,9 @@
     const totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
 
     $(tableBodyElement).append($('<tr class="total">')
-      .append('<th>' + totalLabel + '</th>')
+      .append(`<th>${totalLabel}</th>`)
       .append(columnHeaders.map((columnHeader, index) =>
-        '<td class="player-' + (index % 2 + 1) + '">' + totalScoreCells[index % 2] + '</td>'
+        `<td class="player-${index % 2 + 1}">${totalScoreCells[index % 2]}</td>`
       )));
   }
 
@@ -136,13 +135,13 @@
   function bindTotalData(tableSelector, totalObservablesByColumn) {
     totalObservablesByColumn.forEach((observable, index) => {
       observable.subscribe(total => {
-        $(tableSelector + ' input.total')[index].value = total;
+        $(`${tableSelector} input.total`)[index].value = total;
       });
     });
   }
 
   function getInputObservablesByTableColumn(tableSelector) {
-    const inputsByColumn = _($(tableSelector + ' input.score').get())
+    const inputsByColumn = _($(`${tableSelector} input.score`).get())
       .groupBy((value, index) => index % COLUMN_HEADERS.length)
       .valueOf();
     const inputObservablesByColumn = COLUMN_HEADERS.map((header, columnIndex) =>
@@ -175,7 +174,7 @@
   }
 
   function bindRowScoreData(tableSelector, scoreObservables) {
-    $(tableSelector + ' tbody tr').each((rowIndex, rowElement) => {
+    $(`${tableSelector} tbody tr`).each((rowIndex, rowElement) => {
       const scoreObservablePairs = _(scoreObservables).groupBy((value, index) => Math.floor(index / 2))
         .toArray();
       scoreObservablePairs.forEach((scoreObservablePair, pairIndex) => {
@@ -210,7 +209,7 @@
     return (change) => {
       $(rowElement).find(diffElementSelector).slice(diffElementIndex, diffElementIndex + 1)
         .addClass('visible')
-        .html('+' + scoreDiffCalculator(change));
+        .html(`+${scoreDiffCalculator(change)}`);
     };
   }
 
@@ -237,15 +236,15 @@
     const buttonCells = _(buttonCount).times(() =>
       '<td class="reset" colspan="2"><a class="button no-select" title="Reset scores for this game">Reset</a></td>'
     ).valueOf();
-    $(tableSelector + ' tbody').append($('<tr>')
+    $(`${tableSelector} tbody`).append($('<tr>')
       .append('<th>')
       .append(buttonCells));
 
     // Add click event handlers to clear score inputs
-    $(tableSelector + ' td.reset .button').each((index, element) => {
+    $(`${tableSelector} td.reset .button`).each((index, element) => {
       Rx.Observable.fromEvent(element, 'click')
         .subscribe(() => {
-          $('td.game-' + (index + 1) + ' input.score').val('')
+          $(`td.game-${index + 1} input.score`).val('')
             .trigger('input');
         });
     });

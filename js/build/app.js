@@ -38,7 +38,7 @@
 
   function addColumnHeaderRow(tableHeadElement, columnHeaders) {
     $(tableHeadElement).append($('<tr>').append('<th>').append(columnHeaders.map(function (header, index) {
-      return '<th class="player-' + (index % 2 + 1) + '">' + '<input type="text" class="player" placeholder="' + header + '"></input></th>';
+      return '<th class="player-' + (index % 2 + 1) + '"><input type="text" class="player" placeholder="' + header + '"></input></th>';
     })));
   }
 
@@ -53,7 +53,7 @@
         return '<img class="die" title="' + header.label + '" src=svg/' + die + '.svg></img>';
       }).join('');
 
-      $(tableBodyElement).append($('<tr>').append('<th class="description">' + '<div>' + header.label + '</div>' + dice + '</th>').append(columnHeaders.map(function (columnHeader, index) {
+      $(tableBodyElement).append($('<tr>').append('<th class="description"><div>' + header.label + '</div>' + dice + '</th>').append(columnHeaders.map(function (columnHeader, index) {
         return '<td class="game-' + Math.floor(index / 2 + 1) + ' player-' + (index % 2 + 1) + '">' + scoreCells[index % 2] + '</td>';
       })));
     });
