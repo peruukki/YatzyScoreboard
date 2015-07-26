@@ -2,15 +2,15 @@
 
 (function () {
 
-  var COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
+  const COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
 
-  var UPPER_SECTION_INPUTS = [
+  const UPPER_SECTION_INPUTS = [
     Input('Ones', [1], 1, 5), Input('Twos', [2], 2, 10), Input('Threes', [3], 3, 15),
     Input('Fours', [4], 4, 20), Input('Fives', [5], 5, 25), Input('Sixes', [6], 6, 30)
   ];
-  var UPPER_SECTION_TOTAL_LABEL = 'Total';
+  const UPPER_SECTION_TOTAL_LABEL = 'Total';
 
-  var LOWER_SECTION_INPUTS = [
+  const LOWER_SECTION_INPUTS = [
     Input('Pair', [6, 6], 2, 12), Input('Two pairs', [6, 6, 5, 5], 2, 24),
     Input('Three of a kind', [6, 6, 6], 3, 18), Input('Four of a kind', [6, 6, 6, 6], 4, 24),
     Input('Five of a kind', [6, 6, 6, 6, 6], 5, 30),
@@ -18,7 +18,7 @@
     Input('Full house', [6, 6, 6, 5, 5], 1, 30), Input('Chance', [6, 6, 5, 4, 3], 1, 30),
     Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
   ];
-  var LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
+  const LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
 
 
   $(document).ready(function () {
@@ -26,7 +26,7 @@
     addTableRows('#lower-section', COLUMN_HEADERS, LOWER_SECTION_INPUTS, LOWER_SECTION_TOTAL_LABEL);
 
     observePlayerNameInput();
-    var scoreObservables = observeScoreInput();
+    const scoreObservables = observeScoreInput();
     observeScoreDifferences(scoreObservables[0], scoreObservables[1]);
 
     observeElementsHiddenAfterTransition();
@@ -61,11 +61,11 @@
   function addBodyRows(tableBodyElement, columnHeaders, rowHeaders, totalLabel) {
     // Score input cells
     rowHeaders.forEach(function (header) {
-      var input = '<input type="number" min="0" max="' + header.max + '" step="' + header.step + '" class="score"></input>';
-      var score1Diff = '<span class="score-diff player-1"></span>';
-      var score2Diff = '<span class="score-diff player-2"></span>';
-      var scoreCells = [ score1Diff + input, input + score2Diff ];
-      var dice = header.dice.map(function (die) {
+      const input = '<input type="number" min="0" max="' + header.max + '" step="' + header.step + '" class="score"></input>';
+      const score1Diff = '<span class="score-diff player-1"></span>';
+      const score2Diff = '<span class="score-diff player-2"></span>';
+      const scoreCells = [ score1Diff + input, input + score2Diff ];
+      const dice = header.dice.map(function (die) {
         return '<img class="die" title="' + header.label + '" src=svg/' + die + '.svg></img>';
       }).join('');
 
@@ -77,10 +77,10 @@
     });
 
     // Total cells
-    var totalScoreInput = '<input type="number" min="0" class="total" readonly></input>';
-    var totalScore1Diff = '<span class="score-diff player-1"></span>';
-    var totalScore2Diff = '<span class="score-diff player-2"></span>';
-    var totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
+    const totalScoreInput = '<input type="number" min="0" class="total" readonly></input>';
+    const totalScore1Diff = '<span class="score-diff player-1"></span>';
+    const totalScore2Diff = '<span class="score-diff player-2"></span>';
+    const totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
 
     $(tableBodyElement).append($('<tr class="total">')
       .append('<th>' + totalLabel + '</th>')
@@ -92,8 +92,8 @@
 
   function observePlayerNameInput() {
     COLUMN_HEADERS.forEach(function (header, index) {
-      var upperSectionElement = $('#upper-section thead input')[index];
-      var lowerSectionElement = $('#lower-section thead input')[index];
+      const upperSectionElement = $('#upper-section thead input')[index];
+      const lowerSectionElement = $('#lower-section thead input')[index];
 
       bindNameData(upperSectionElement, lowerSectionElement);
       bindNameData(lowerSectionElement, upperSectionElement);
@@ -111,8 +111,8 @@
 
 
   function observeScoreInput() {
-    var upperSectionObservables = bindScoreData('#upper-section');
-    var lowerSectionObservables = bindScoreData('#lower-section', upperSectionObservables.scoreTotalObservables);
+    const upperSectionObservables = bindScoreData('#upper-section');
+    const lowerSectionObservables = bindScoreData('#lower-section', upperSectionObservables.scoreTotalObservables);
 
     return [ upperSectionObservables, lowerSectionObservables ].map(function (observables) {
       return mergeObservablesByColumn(observables.scoreInputObservables, observables.scoreTotalObservables);
@@ -120,10 +120,10 @@
   }
 
   function bindScoreData(tableSelector, externalObservableByColumn) {
-    var observablesFromTable = getInputObservablesByTableColumn(tableSelector);
-    var allObservablesByColumn = mergeObservablesByColumn(observablesFromTable, externalObservableByColumn);
+    const observablesFromTable = getInputObservablesByTableColumn(tableSelector);
+    const allObservablesByColumn = mergeObservablesByColumn(observablesFromTable, externalObservableByColumn);
 
-    var totalObservablesByColumn = allObservablesByColumn.map(function (observables) {
+    const totalObservablesByColumn = allObservablesByColumn.map(function (observables) {
       return Rx.Observable.combineLatest(observables, function () {
         return _(arguments).reduce(function (sum, value) { return sum + value; })
           .valueOf();
@@ -143,10 +143,10 @@
   }
 
   function getInputObservablesByTableColumn(tableSelector) {
-    var inputsByColumn = _($(tableSelector + ' input.score').get())
+    const inputsByColumn = _($(tableSelector + ' input.score').get())
       .groupBy(function (value, index) { return index % COLUMN_HEADERS.length; })
       .valueOf();
-    var inputObservablesByColumn = COLUMN_HEADERS.map(function (header, columnIndex) {
+    const inputObservablesByColumn = COLUMN_HEADERS.map(function (header, columnIndex) {
       return inputsByColumn[columnIndex].map(createObservableForNumberInputField);
     });
     return inputObservablesByColumn;
@@ -177,20 +177,20 @@
 
   function bindRowScoreData(tableSelector, scoreObservables) {
     $(tableSelector + ' tbody tr').each(function (rowIndex, rowElement) {
-      var scoreObservablePairs = _(scoreObservables).groupBy(function (value, index) { return Math.floor(index / 2); })
+      const scoreObservablePairs = _(scoreObservables).groupBy(function (value, index) { return Math.floor(index / 2); })
         .toArray();
       scoreObservablePairs.forEach(function (scoreObservablePair, pairIndex) {
-        var rowScoreChangeObservable = Rx.Observable.combineLatest(
+        const rowScoreChangeObservable = Rx.Observable.combineLatest(
           scoreObservablePair[0][rowIndex],
           scoreObservablePair[1][rowIndex],
           function (score1, score2) { return RowScoreChange(score1, score2); }
         );
 
-        var score1MinusScore2 = function (change) { return change.score1 - change.score2; };
-        var score2MinusScore1 = function (change) { return change.score2 - change.score1; };
-        var isScore1Bigger = function (change) { return score1MinusScore2(change) > 0; };
-        var isScore2Bigger = function (change) { return score2MinusScore1(change) > 0; };
-        var not = function (comparisonFunc) {
+        const score1MinusScore2 = function (change) { return change.score1 - change.score2; };
+        const score2MinusScore1 = function (change) { return change.score2 - change.score1; };
+        const isScore1Bigger = function (change) { return score1MinusScore2(change) > 0; };
+        const isScore2Bigger = function (change) { return score2MinusScore1(change) > 0; };
+        const not = function (comparisonFunc) {
           return function (change) { return !comparisonFunc(change); };
         };
 
@@ -237,7 +237,7 @@
 
   function addResetButtons(tableSelector, buttonCount) {
     // Add buttons
-    var buttonCells = _(buttonCount).times(function () {
+    const buttonCells = _(buttonCount).times(function () {
       return '<td class="reset" colspan="2"><a class="button no-select" title="Reset scores for this game">Reset</a></td>';
     }).valueOf();
     $(tableSelector + ' tbody').append($('<tr>')
