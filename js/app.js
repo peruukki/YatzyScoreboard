@@ -1,8 +1,6 @@
-'use strict';
-
-const $ = require('jquery');
-const Rx = require('rx-lite');
-const _ = require('lodash');
+import $ from 'jquery';
+import Rx from 'rx-lite';
+import _ from 'lodash';
 
 const COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
 

@@ -1,4 +1,7 @@
 {
+  "ecmaFeatures": {
+    "modules": true
+  },
   "env": {
     "browser": true,
     "es6": true,
@@ -9,7 +12,6 @@
     "new-cap": [2, { "capIsNew": false }],
     "no-use-before-define": [2, "nofunc"],
     "quotes": [2, "single"],
-    "semi": 2,
-    "strict": [2, "global"]
+    "semi": 2
   }
 }
