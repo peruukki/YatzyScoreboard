@@ -4,7 +4,7 @@
   "description": "Keep track of your Yatzy game scores in the browser.",
   "main": "index.html",
   "config": {
-    "browserify_args": "js/app.js -o js/build/app.js -t [ babelify --presets [ es2015 ] ]",
+    "browserify_args": "js/app.js -o js/build/app.js -t [ babelify ]",
     "eslint_args": "js/app.js"
   },
   "scripts": {
