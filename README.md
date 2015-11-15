@@ -10,10 +10,32 @@ time-consuming and error-prone task. It was also a good opportunity to try out
 
 ## Building
 
-This transpiles the `js/app.js` file from ES6 to ES5 to the target file `js/build/app.js`:
+This bundles the JavaScript files to the target file `js/build/app.js` using [Browserify](http://browserify.org/):
 
 ```
 npm run build
+```
+
+## Watching for JavaScript changes and re-building
+
+Bundle a minified JavaScript file on file changes:
+
+```
+npm run watch
+```
+
+Bundle a non-minified JavaScript file with source maps on file changes:
+
+```
+npm run watch-debug
+```
+
+## Testing
+
+Lint the JavaScript with [ESLint](http://eslint.org/):
+
+```
+npm test
 ```
 
 ## License

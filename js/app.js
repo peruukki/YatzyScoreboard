@@ -1,6 +1,9 @@
 'use strict';
 
 (() => {
+  const $ = require('jquery');
+  const Rx = require('rx-lite');
+  const _ = require('lodash');
 
   const COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
 
@@ -176,7 +179,7 @@
   function bindRowScoreData(tableSelector, scoreObservables) {
     $(`${tableSelector} tbody tr`).each((rowIndex, rowElement) => {
       const scoreObservablePairs = _(scoreObservables).groupBy((value, index) => Math.floor(index / 2))
-        .toArray();
+        .toArray().valueOf();
       scoreObservablePairs.forEach((scoreObservablePair, pairIndex) => {
         const rowScoreChangeObservable = Rx.Observable.combineLatest(
           scoreObservablePair[0][rowIndex],

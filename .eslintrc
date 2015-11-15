@@ -2,11 +2,7 @@
   "env": {
     "browser": true,
     "es6": true,
-    "jquery": true
-  },
-  "globals": {
-    "_": false,
-    "Rx": false
+    "node": true
   },
   "rules": {
     "global-strict": [2, "always"],
