@@ -8,13 +8,33 @@ lines straight!). So I decided to make a digital one, as it can also count the s
 time-consuming and error-prone task. It was also a good opportunity to try out
 [Reactive Extensions](https://github.com/Reactive-Extensions/RxJS).
 
+## Getting started
+
+This installs the required dependencies, bundles the JavaScript and starts an HTTP server:
+
+```
+npm start
+```
+
+Then go to `http://localhost:8000` with your browser to see the scoreboard.
+
+## Serving the page locally
+
+Start a local HTTP server serving scoreboard page:
+
+```
+npm run server
+```
+
 ## Building
 
-This bundles the JavaScript files to the target file `js/build/app.js` using [Browserify](http://browserify.org/):
+Bundle the JavaScript files to the target file `js/build/app.js` using [Browserify](http://browserify.org/):
 
 ```
 npm run build
 ```
+
+The bundled JavaScript file is included in the repository so that the scoreboard can be served easily on GitHub pages.
 
 ## Watching for JavaScript changes and re-building
 
