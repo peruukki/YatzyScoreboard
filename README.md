@@ -50,12 +50,18 @@ Bundle a non-minified JavaScript file with source maps on file changes:
 npm run watch-debug
 ```
 
-## Testing
+## Linting
 
 Lint the JavaScript with [ESLint](http://eslint.org/):
 
 ```
-npm test
+npm run lint
+```
+
+Watch for JavaScript file changes and lint on change:
+
+```
+npm run lint-watch
 ```
 
 ## License
