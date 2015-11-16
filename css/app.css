@@ -130,28 +130,28 @@ td.reset {
   text-transform: uppercase;
 }
 
-@media screen and (max-width: 1350px)
+@media screen and (max-width: 1400px)
 {
   html {
     font-size: 26px;
   }
 }
 
-@media screen and (max-width: 1250px)
+@media screen and (max-width: 1300px)
 {
   html {
     font-size: 24px;
   }
 }
 
-@media screen and (max-width: 1170px)
+@media screen and (max-width: 1200px)
 {
   html {
     font-size: 22px;
   }
 }
 
-@media screen and (max-width: 1080px)
+@media screen and (max-width: 1100px)
 {
   html {
     font-size: 20px;
@@ -232,10 +232,6 @@ td.reset {
   html {
     font-size: 16px;
   }
-}
-
-@media screen and (max-width: 450px)
-{
   input {
     width: 2rem;
   }
@@ -245,5 +241,12 @@ td.reset {
 {
   html {
     font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 350px)
+{
+  html {
+    font-size: 13px;
   }
 }
