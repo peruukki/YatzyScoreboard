@@ -1,6 +1,6 @@
 {
   "name": "YatzyScoreboard",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Keep track of your Yatzy game scores in the browser.",
   "main": "index.html",
   "config": {
