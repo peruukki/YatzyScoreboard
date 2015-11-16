@@ -44,11 +44,11 @@ function addEventListeners() {
 }
 
 function Input(label, dice, step, max) {
-  return { label: label, dice: dice, step: step, max: max };
+  return { label, dice, step, max };
 }
 
 function RowScoreChange(score1, score2) {
-  return { score1: score1, score2: score2 };
+  return { score1, score2 };
 }
 
 function createSection(template, tableSelector, rows, totalLabel) {
