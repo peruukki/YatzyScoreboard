@@ -126,6 +126,10 @@ td.reset {
   width: 53%;
 }
 
+#lower-section tr.total th {
+  text-transform: uppercase;
+}
+
 @media screen and (max-width: 1350px)
 {
   html {

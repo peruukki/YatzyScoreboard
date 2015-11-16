@@ -10,7 +10,6 @@ const UPPER_SECTION_INPUTS = [
   Input('Ones', [1], 1, 5), Input('Twos', [2], 2, 10), Input('Threes', [3], 3, 15),
   Input('Fours', [4], 4, 20), Input('Fives', [5], 5, 25), Input('Sixes', [6], 6, 30)
 ];
-const UPPER_SECTION_TOTAL_LABEL = 'Total';
 
 const LOWER_SECTION_INPUTS = [
   Input('Pair', [6, 6], 2, 12), Input('Two pairs', [6, 6, 5, 5], 2, 24),
@@ -20,14 +19,13 @@ const LOWER_SECTION_INPUTS = [
   Input('Full house', [6, 6, 6, 5, 5], 1, 30), Input('Chance', [6, 6, 5, 4, 3], 1, 30),
   Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
 ];
-const LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
 
 createScoreboard(addEventListeners);
 
 function createScoreboard(onReady) {
   $.get('templates/section.mustache', template => {
-    createSection(template, '#upper-section', UPPER_SECTION_INPUTS, UPPER_SECTION_TOTAL_LABEL);
-    createSection(template, '#lower-section', LOWER_SECTION_INPUTS, LOWER_SECTION_TOTAL_LABEL);
+    createSection(template, '#upper-section', UPPER_SECTION_INPUTS);
+    createSection(template, '#lower-section', LOWER_SECTION_INPUTS);
     onReady();
   });
 }
@@ -51,12 +49,11 @@ function RowScoreChange(score1, score2) {
   return { score1, score2 };
 }
 
-function createSection(template, tableSelector, rows, totalLabel) {
+function createSection(template, tableSelector, rows) {
   const context = {
     games: _.range(1, GAME_COUNT + 1).map(index => ({ index })),
     playerNames: _.range(1, PLAYER_COUNT + 1).map(index => ({ placeholder: 'Name', index })),
-    rows,
-    totalLabel
+    rows
   };
 
   $(tableSelector).html(Mustache.render(template, context));
