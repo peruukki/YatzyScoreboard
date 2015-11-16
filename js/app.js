@@ -1,8 +1,10 @@
 import $ from 'jquery';
 import Rx from 'rx-lite';
 import _ from 'lodash';
+import Mustache from 'mustache';
 
-const COLUMN_HEADERS = [ 'Name', 'Name', 'Name', 'Name' ];
+const GAME_COUNT = 2;
+const PLAYER_COUNT = 2;
 
 const UPPER_SECTION_INPUTS = [
   Input('Ones', [1], 1, 5), Input('Twos', [2], 2, 10), Input('Threes', [3], 3, 15),
@@ -20,20 +22,26 @@ const LOWER_SECTION_INPUTS = [
 ];
 const LOWER_SECTION_TOTAL_LABEL = 'TOTAL';
 
+createScoreboard(addEventListeners);
 
-$(document).ready(() => {
-  addTableRows('#upper-section', COLUMN_HEADERS, UPPER_SECTION_INPUTS, UPPER_SECTION_TOTAL_LABEL);
-  addTableRows('#lower-section', COLUMN_HEADERS, LOWER_SECTION_INPUTS, LOWER_SECTION_TOTAL_LABEL);
+function createScoreboard(onReady) {
+  $.get('templates/section.mustache', template => {
+    createSection(template, '#upper-section', UPPER_SECTION_INPUTS, UPPER_SECTION_TOTAL_LABEL);
+    createSection(template, '#lower-section', LOWER_SECTION_INPUTS, LOWER_SECTION_TOTAL_LABEL);
+    onReady();
+  });
+}
 
+function addEventListeners() {
   observePlayerNameInput();
+
   const scoreObservables = observeScoreInput();
   observeScoreDifferences(scoreObservables[0], scoreObservables[1]);
 
   observeElementsHiddenAfterTransition();
 
-  addResetButtons('#lower-section', COLUMN_HEADERS.length / 2);
-});
-
+  addResetButtons('#lower-section', GAME_COUNT);
+}
 
 function Input(label, dice, step, max) {
   return { label: label, dice: dice, step: step, max: max };
@@ -43,54 +51,20 @@ function RowScoreChange(score1, score2) {
   return { score1: score1, score2: score2 };
 }
 
+function createSection(template, tableSelector, rows, totalLabel) {
+  const context = {
+    games: _.range(1, GAME_COUNT + 1).map(index => ({ index })),
+    playerNames: _.range(1, PLAYER_COUNT + 1).map(index => ({ placeholder: 'Name', index })),
+    rows,
+    totalLabel
+  };
 
-function addTableRows(tableSelector, columnHeaders, rowHeaders, totalLabel) {
-  addColumnHeaderRow(`${tableSelector} thead`, columnHeaders);
-  addBodyRows(`${tableSelector} tbody`, columnHeaders, rowHeaders, totalLabel);
-}
-
-function addColumnHeaderRow(tableHeadElement, columnHeaders) {
-  $(tableHeadElement).append($('<tr>')
-    .append('<th>')
-    .append(columnHeaders.map((header, index) =>
-      `<th class="player-${index % 2 + 1}"><input type="text" class="player" placeholder="${header}"></input></th>`
-    )));
-}
-
-function addBodyRows(tableBodyElement, columnHeaders, rowHeaders, totalLabel) {
-  // Score input cells
-  rowHeaders.forEach(header => {
-    const input = `<input type="number" min="0" max="${header.max}" step="${header.step}" class="score"></input>`;
-    const score1Diff = '<span class="score-diff player-1"></span>';
-    const score2Diff = '<span class="score-diff player-2"></span>';
-    const scoreCells = [ score1Diff + input, input + score2Diff ];
-    const dice = header.dice.map(die =>
-      `<img class="die" title="${header.label}" src=svg/${die}.svg></img>`
-    ).join('');
-
-    $(tableBodyElement).append($('<tr>')
-      .append(`<th class="description"><div>${header.label}</div>${dice}</th>`)
-      .append(columnHeaders.map((columnHeader, index) =>
-        `<td class="game-${Math.floor(index / 2 + 1)} player-${index % 2 + 1}">${scoreCells[index % 2]}</td>`
-      )));
-  });
-
-  // Total cells
-  const totalScoreInput = '<input type="number" min="0" class="total" readonly></input>';
-  const totalScore1Diff = '<span class="score-diff player-1"></span>';
-  const totalScore2Diff = '<span class="score-diff player-2"></span>';
-  const totalScoreCells = [ totalScore1Diff + totalScoreInput, totalScoreInput + totalScore2Diff ];
-
-  $(tableBodyElement).append($('<tr class="total">')
-    .append(`<th>${totalLabel}</th>`)
-    .append(columnHeaders.map((columnHeader, index) =>
-      `<td class="player-${index % 2 + 1}">${totalScoreCells[index % 2]}</td>`
-    )));
+  $(tableSelector).html(Mustache.render(template, context));
 }
 
 
 function observePlayerNameInput() {
-  COLUMN_HEADERS.forEach((header, index) => {
+  _.range(GAME_COUNT * PLAYER_COUNT).forEach(index => {
     const upperSectionElement = $('#upper-section thead input')[index];
     const lowerSectionElement = $('#lower-section thead input')[index];
 
@@ -141,10 +115,11 @@ function bindTotalData(tableSelector, totalObservablesByColumn) {
 }
 
 function getInputObservablesByTableColumn(tableSelector) {
+  const columnCount = GAME_COUNT * PLAYER_COUNT;
   const inputsByColumn = _($(`${tableSelector} input.score`).get())
-    .groupBy((value, index) => index % COLUMN_HEADERS.length)
+    .groupBy((value, index) => index % columnCount)
     .valueOf();
-  const inputObservablesByColumn = COLUMN_HEADERS.map((header, columnIndex) =>
+  const inputObservablesByColumn = _.range(columnCount).map(columnIndex =>
     inputsByColumn[columnIndex].map(createObservableForNumberInputField)
   );
   return inputObservablesByColumn;

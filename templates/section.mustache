@@ -1,0 +1,49 @@
+<thead>
+  <tr>
+    <th></th>
+    {{#games}}
+    {{#playerNames}}
+    <th class="player-{{index}}">
+      <input type="text" class="player" placeholder="{{placeholder}}">
+    </th>
+    {{/playerNames}}
+    {{/games}}
+  </tr>
+</thead>
+
+<tbody>
+  {{#rows}}
+  <tr>
+    <th class="description">
+      <div>{{label}}</div>
+      {{#dice}}
+      <img class="die" title="{{label}}" src="svg/{{.}}.svg">
+      {{/dice}}
+    </th>
+    {{#games}}
+    <td class="game-{{index}} player-1">
+      <span class="score-diff player-1"></span>
+      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score">
+    </td>
+    <td class="game-{{index}} player-2">
+      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score">
+      <span class="score-diff player-2"></span>
+    </td>
+    {{/games}}
+  </tr>
+  {{/rows}}
+
+  <tr class="total">
+    <th>{{totalLabel}}</th>
+    {{#games}}
+    <td class="player-1">
+      <span class="score-diff player-1"></span>
+      <input type="number" min="0" class="total" readonly>
+    </td>
+    <td class="player-2">
+      <input type="number" min="0" class="total" readonly>
+      <span class="score-diff player-2"></span>
+    </td>
+    {{/games}}
+  </tr>
+</tbody>
