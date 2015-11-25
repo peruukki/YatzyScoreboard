@@ -161,6 +161,13 @@ td.reset {
   }
 }
 
+@media screen and (max-width: 1050px)
+{
+  html {
+    font-size: 19px;
+  }
+}
+
 @media screen and (max-width: 1000px)
 {
   html {
