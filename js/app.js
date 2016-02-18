@@ -20,6 +20,8 @@ const LOWER_SECTION_INPUTS = [
   Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
 ];
 
+const haveLocalStorage = isLocalStorageAvailable();
+
 createScoreboard(addEventListeners);
 
 function createScoreboard(onReady) {
@@ -50,35 +52,46 @@ function RowScoreChange(score1, score2) {
 }
 
 function createSection(template, tableSelector, rows) {
-  const context = {
-    games: _.range(1, GAME_COUNT + 1).map(index => ({ index })),
-    playerNames: _.range(1, PLAYER_COUNT + 1).map(index => ({ placeholder: 'Name', index })),
-    rows
-  };
+  const gameRange = _.range(1, GAME_COUNT + 1);
+  const playerRange = _.range(1, PLAYER_COUNT + 1);
 
+  const games = gameRange.map(index => ({ index }));
+  const playerNames = _.flatten(gameRange.map(gameIndex =>
+    playerRange.map(playerIndex => ({ name: readName(gameIndex, playerIndex), gameIndex, playerIndex }))
+  ));
+
+  const context = { games, playerNames, rows };
   $(tableSelector).html(Mustache.render(template, context));
 }
 
 
 function observePlayerNameInput() {
-  _.range(GAME_COUNT * PLAYER_COUNT).forEach(index => {
-    const upperSectionElement = $('#upper-section thead input')[index];
-    const lowerSectionElement = $('#lower-section thead input')[index];
+  _.range(GAME_COUNT).forEach(gameIndex => {
+    _.range(PLAYER_COUNT).forEach(playerIndex => {
+      const inputIndex = gameIndex * PLAYER_COUNT + playerIndex;
 
-    bindNameData(upperSectionElement, lowerSectionElement);
-    bindNameData(lowerSectionElement, upperSectionElement);
+      const upperSectionElement = $('#upper-section thead input')[inputIndex];
+      const lowerSectionElement = $('#lower-section thead input')[inputIndex];
+
+      const upperSectionName$ = name$(upperSectionElement);
+      const lowerSectionName$ = name$(lowerSectionElement);
+
+      // Sync name inputs
+      upperSectionName$.subscribe(name => { lowerSectionElement.value = name; });
+      lowerSectionName$.subscribe(name => { upperSectionElement.value = name; });
+
+      // Store names to local storage
+      upperSectionName$.subscribe(name => storeName(name, gameIndex + 1, playerIndex + 1));
+      lowerSectionName$.subscribe(name => storeName(name, gameIndex + 1, playerIndex + 1));
+    });
   });
 }
 
-function bindNameData(sourceElement, targetElement) {
-  Rx.Observable.fromEvent(sourceElement, 'keyup')
+function name$(inputElement) {
+  return Rx.Observable.fromEvent(inputElement, 'keyup')
     .map(e => e.target.value)
-    .distinctUntilChanged()
-    .subscribe(text => {
-      targetElement.value = text;
-    });
+    .distinctUntilChanged();
 }
-
 
 function observeScoreInput() {
   const upperSectionObservables = bindScoreData('#upper-section');
@@ -212,12 +225,61 @@ function addResetButtons(tableSelector, buttonCount) {
     .append('<th>')
     .append(buttonCells));
 
-  // Add click event handlers to clear score inputs
+  // Add click event handlers to clear name and score inputs
   $(`${tableSelector} td.reset .button`).each((index, element) => {
     Rx.Observable.fromEvent(element, 'click')
       .subscribe(() => {
         $(`td.game-${index + 1} input.score`).val('')
           .trigger('input');
+        $(`th.game-${index + 1} input.player`).val('');
+
+        // For some reason triggering any event doesn't call the event listener,
+        // so need to clear names manually from local storage
+        _.range(1, PLAYER_COUNT + 1).forEach(playerIndex => {
+          storeName('', index + 1, playerIndex);
+        });
       });
   });
+}
+
+
+// From https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function isLocalStorageAvailable() {
+  try {
+    const x = '__storage_test__';
+    window.localStorage.setItem(x, x);
+    window.localStorage.removeItem(x);
+    return true;
+  }
+  catch (e) {
+    return false;
+  }
+}
+
+
+function storeName(name, gameIndex, playerIndex) {
+  store(`name-${gameIndex}-${playerIndex}`, name);
+}
+
+function readName(gameIndex, playerIndex) {
+  return read(`name-${gameIndex}-${playerIndex}`);
+}
+
+
+function store(key, value) {
+  if (haveLocalStorage) {
+    if (value) {
+      window.localStorage.setItem(key, value);
+    } else {
+      window.localStorage.removeItem(key);
+    }
+  }
+}
+
+function read(key) {
+  if (haveLocalStorage) {
+    return window.localStorage.getItem(key) || '';
+  } else {
+    return '';
+  }
 }

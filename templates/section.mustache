@@ -1,13 +1,11 @@
 <thead>
   <tr>
     <th></th>
-    {{#games}}
     {{#playerNames}}
-    <th class="player-{{index}}">
-      <input type="text" class="player" placeholder="{{placeholder}}">
+    <th class="game-{{gameIndex}} player-{{playerIndex}}">
+      <input type="text" class="player" placeholder="Name" value="{{name}}">
     </th>
     {{/playerNames}}
-    {{/games}}
   </tr>
 </thead>
 
