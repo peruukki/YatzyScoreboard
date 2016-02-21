@@ -26,8 +26,8 @@ createScoreboard(addEventListeners);
 
 function createScoreboard(onReady) {
   $.get('templates/section.mustache', template => {
-    createSection(template, '#upper-section', UPPER_SECTION_INPUTS);
-    createSection(template, '#lower-section', LOWER_SECTION_INPUTS);
+    createSection(template, '#upper-section', 'upper', UPPER_SECTION_INPUTS);
+    createSection(template, '#lower-section', 'lower', LOWER_SECTION_INPUTS);
     onReady();
   });
 }
@@ -35,12 +35,14 @@ function createScoreboard(onReady) {
 function addEventListeners() {
   observePlayerNameInput();
 
-  const scoreObservables = observeScoreInput();
-  observeScoreDifferences(scoreObservables[0], scoreObservables[1]);
+  const [upperSectionScores$, lowerSectionScores$] = observeScoreInput();
+  observeScoreDifferences(upperSectionScores$, lowerSectionScores$);
 
   observeElementsHiddenAfterTransition();
 
   addResetButtons('#lower-section', GAME_COUNT);
+
+  storeScores(upperSectionScores$, lowerSectionScores$);
 }
 
 function Input(label, dice, step, max) {
@@ -51,7 +53,7 @@ function RowScoreChange(score1, score2) {
   return { score1, score2 };
 }
 
-function createSection(template, tableSelector, rows) {
+function createSection(template, tableSelector, sectionName, rows) {
   const gameRange = _.range(1, GAME_COUNT + 1);
   const playerRange = _.range(1, PLAYER_COUNT + 1);
 
@@ -59,8 +61,25 @@ function createSection(template, tableSelector, rows) {
   const playerNames = _.flatten(gameRange.map(gameIndex =>
     playerRange.map(playerIndex => ({ name: readName(gameIndex, playerIndex), gameIndex, playerIndex }))
   ));
+  const scores = rows.map((row, rowIndex) =>
+    _.extend({}, row, { games: gameRange.map(gameIndex =>
+      ({
+        gameIndex,
+        player1: readScore(sectionName, gameIndex, 1, rowIndex + 1),
+        player2: readScore(sectionName, gameIndex, 2, rowIndex + 1)
+      })
+    )})
+  );
+  const totalScores = {
+    games: gameRange.map(gameIndex =>
+      ({
+        player1: readScore(sectionName, gameIndex, 1, rows.length + 1),
+        player2: readScore(sectionName, gameIndex, 2, rows.length + 1)
+      })
+    )
+  };
 
-  const context = { games, playerNames, rows };
+  const context = { games, playerNames, scores, totalScores };
   $(tableSelector).html(Mustache.render(template, context));
 }
 
@@ -146,7 +165,7 @@ function mergeObservablesByColumn(observables, extraObservableByColumn) {
 }
 
 function createObservableForNumberInputField(inputElement) {
-  return Rx.Observable.just(0)
+  return Rx.Observable.just(+$(inputElement).val() || 0)
     .merge(Rx.Observable.fromEvent($(inputElement), 'input')
       .map(e => +e.target.value || 0)
       .distinctUntilChanged());
@@ -243,6 +262,25 @@ function addResetButtons(tableSelector, buttonCount) {
 }
 
 
+function storeScores(upperSectionScores$, lowerSectionScores$) {
+  storeSectionScores(upperSectionScores$, 'upper');
+  storeSectionScores(lowerSectionScores$, 'lower');
+}
+
+function storeSectionScores(sectionScores$, sectionName) {
+  sectionScores$.forEach((columnScores$, columnIndex) => {
+    // Drop total score row, it's calculated from other values
+    _.dropRight(columnScores$).forEach((score$, rowIndex) => {
+      score$.subscribe(score => {
+        const gameIndex = Math.floor(columnIndex / PLAYER_COUNT) + 1;
+        const playerIndex = columnIndex % PLAYER_COUNT + 1;
+        storeScore(sectionName, score, gameIndex, playerIndex, rowIndex + 1);
+      });
+    });
+  });
+}
+
+
 // From https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 function isLocalStorageAvailable() {
   try {
@@ -265,6 +303,13 @@ function readName(gameIndex, playerIndex) {
   return read(`name-${gameIndex}-${playerIndex}`);
 }
 
+function storeScore(section, score, gameIndex, playerIndex, rowIndex) {
+  store(`score-${section}-${gameIndex}-${playerIndex}-${rowIndex}`, score);
+}
+
+function readScore(section, gameIndex, playerIndex, rowIndex) {
+  return read(`score-${section}-${gameIndex}-${playerIndex}-${rowIndex}`);
+}
 
 function store(key, value) {
   if (haveLocalStorage) {

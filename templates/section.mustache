@@ -10,7 +10,7 @@
 </thead>
 
 <tbody>
-  {{#rows}}
+  {{#scores}}
   <tr>
     <th class="description">
       <div class="label">{{label}}</div>
@@ -19,17 +19,17 @@
       {{/dice}}
     </th>
     {{#games}}
-    <td class="game-{{index}} player-1">
+    <td class="game-{{gameIndex}} player-1">
       <span class="score-diff player-1"></span>
-      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score">
+      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player1}}">
     </td>
-    <td class="game-{{index}} player-2">
-      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score">
+    <td class="game-{{gameIndex}} player-2">
+      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player2}}">
       <span class="score-diff player-2"></span>
     </td>
     {{/games}}
   </tr>
-  {{/rows}}
+  {{/scores}}
 
   <tr class="total">
     <th>Total</th>
