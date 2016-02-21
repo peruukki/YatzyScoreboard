@@ -3,6 +3,8 @@ import Rx from 'rx-lite';
 import _ from 'lodash';
 import Mustache from 'mustache';
 
+import store from './store';
+
 const GAME_COUNT = 2;
 const PLAYER_COUNT = 2;
 
@@ -19,8 +21,6 @@ const LOWER_SECTION_INPUTS = [
   Input('Full house', [6, 6, 6, 5, 5], 1, 30), Input('Chance', [6, 6, 5, 4, 3], 1, 30),
   Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
 ];
-
-const haveLocalStorage = isLocalStorageAvailable();
 
 createScoreboard(addEventListeners);
 
@@ -59,22 +59,22 @@ function createSection(template, tableSelector, sectionName, rows) {
 
   const games = gameRange.map(index => ({ index }));
   const playerNames = _.flatten(gameRange.map(gameIndex =>
-    playerRange.map(playerIndex => ({ name: readName(gameIndex, playerIndex), gameIndex, playerIndex }))
+    playerRange.map(playerIndex => ({ name: store.readName(gameIndex, playerIndex), gameIndex, playerIndex }))
   ));
   const scores = rows.map((row, rowIndex) =>
     _.extend({}, row, { games: gameRange.map(gameIndex =>
       ({
         gameIndex,
-        player1: readScore(sectionName, gameIndex, 1, rowIndex + 1),
-        player2: readScore(sectionName, gameIndex, 2, rowIndex + 1)
+        player1: store.readScore(sectionName, gameIndex, 1, rowIndex + 1),
+        player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1)
       })
     )})
   );
   const totalScores = {
     games: gameRange.map(gameIndex =>
       ({
-        player1: readScore(sectionName, gameIndex, 1, rows.length + 1),
-        player2: readScore(sectionName, gameIndex, 2, rows.length + 1)
+        player1: store.readScore(sectionName, gameIndex, 1, rows.length + 1),
+        player2: store.readScore(sectionName, gameIndex, 2, rows.length + 1)
       })
     )
   };
@@ -100,8 +100,8 @@ function observePlayerNameInput() {
       lowerSectionName$.subscribe(name => { upperSectionElement.value = name; });
 
       // Store names to local storage
-      upperSectionName$.subscribe(name => storeName(name, gameIndex + 1, playerIndex + 1));
-      lowerSectionName$.subscribe(name => storeName(name, gameIndex + 1, playerIndex + 1));
+      upperSectionName$.subscribe(name => store.storeName(name, gameIndex + 1, playerIndex + 1));
+      lowerSectionName$.subscribe(name => store.storeName(name, gameIndex + 1, playerIndex + 1));
     });
   });
 }
@@ -255,7 +255,7 @@ function addResetButtons(tableSelector, buttonCount) {
         // For some reason triggering any event doesn't call the event listener,
         // so need to clear names manually from local storage
         _.range(1, PLAYER_COUNT + 1).forEach(playerIndex => {
-          storeName('', index + 1, playerIndex);
+          store.storeName('', index + 1, playerIndex);
         });
       });
   });
@@ -274,57 +274,8 @@ function storeSectionScores(sectionScores$, sectionName) {
       score$.subscribe(score => {
         const gameIndex = Math.floor(columnIndex / PLAYER_COUNT) + 1;
         const playerIndex = columnIndex % PLAYER_COUNT + 1;
-        storeScore(sectionName, score, gameIndex, playerIndex, rowIndex + 1);
+        store.storeScore(sectionName, score, gameIndex, playerIndex, rowIndex + 1);
       });
     });
   });
-}
-
-
-// From https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-function isLocalStorageAvailable() {
-  try {
-    const x = '__storage_test__';
-    window.localStorage.setItem(x, x);
-    window.localStorage.removeItem(x);
-    return true;
-  }
-  catch (e) {
-    return false;
-  }
-}
-
-
-function storeName(name, gameIndex, playerIndex) {
-  store(`name-${gameIndex}-${playerIndex}`, name);
-}
-
-function readName(gameIndex, playerIndex) {
-  return read(`name-${gameIndex}-${playerIndex}`);
-}
-
-function storeScore(section, score, gameIndex, playerIndex, rowIndex) {
-  store(`score-${section}-${gameIndex}-${playerIndex}-${rowIndex}`, score);
-}
-
-function readScore(section, gameIndex, playerIndex, rowIndex) {
-  return read(`score-${section}-${gameIndex}-${playerIndex}-${rowIndex}`);
-}
-
-function store(key, value) {
-  if (haveLocalStorage) {
-    if (value) {
-      window.localStorage.setItem(key, value);
-    } else {
-      window.localStorage.removeItem(key);
-    }
-  }
-}
-
-function read(key) {
-  if (haveLocalStorage) {
-    return window.localStorage.getItem(key) || '';
-  } else {
-    return '';
-  }
 }
