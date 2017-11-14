@@ -57,29 +57,18 @@ function createSection(template, tableSelector, sectionName, rows) {
   const gameRange = _.range(1, GAME_COUNT + 1);
   const playerRange = _.range(1, PLAYER_COUNT + 1);
 
-  const games = gameRange.map(index => ({ index }));
-  const playerNames = _.flatten(gameRange.map(gameIndex =>
-    playerRange.map(playerIndex => ({ name: store.readName(gameIndex, playerIndex), gameIndex, playerIndex }))
-  ));
-  const scores = rows.map((row, rowIndex) =>
-    _.extend({}, row, { games: gameRange.map(gameIndex =>
-      ({
-        gameIndex,
-        player1: store.readScore(sectionName, gameIndex, 1, rowIndex + 1),
-        player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1)
-      })
-    )})
-  );
-  const totalScores = {
-    games: gameRange.map(gameIndex =>
-      ({
-        player1: store.readScore(sectionName, gameIndex, 1, rows.length + 1),
-        player2: store.readScore(sectionName, gameIndex, 2, rows.length + 1)
-      })
-    )
-  };
+  const games = gameRange.map(gameIndex => ({
+    gameIndex,
+    playerNames: playerRange.map(playerIndex =>
+      ({ name: store.readName(gameIndex, playerIndex), playerIndex })),
+    scores: rows.map((row, rowIndex) => ({
+      player1: store.readScore(sectionName, gameIndex, 1, rowIndex + 1),
+      player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1)
+    }))
+  }));
+  const labels = rows;
 
-  const context = { games, playerNames, scores, totalScores };
+  const context = { games, labels };
   $(tableSelector).html(Mustache.render(template, context));
 }
 
@@ -89,8 +78,8 @@ function observePlayerNameInput() {
     _.range(PLAYER_COUNT).forEach(playerIndex => {
       const inputIndex = gameIndex * PLAYER_COUNT + playerIndex;
 
-      const upperSectionElement = $('#upper-section thead input')[inputIndex];
-      const lowerSectionElement = $('#lower-section thead input')[inputIndex];
+      const upperSectionElement = $('#upper-section .game-header input')[inputIndex];
+      const lowerSectionElement = $('#lower-section .game-header input')[inputIndex];
 
       const upperSectionName$ = name$(upperSectionElement);
       const lowerSectionName$ = name$(lowerSectionElement);
@@ -145,9 +134,13 @@ function bindTotalData(tableSelector, totalObservablesByColumn) {
 
 function getInputObservablesByTableColumn(tableSelector) {
   const columnCount = GAME_COUNT * PLAYER_COUNT;
-  const inputsByColumn = _($(`${tableSelector} input.score`).get())
-    .groupBy((value, index) => index % columnCount)
-    .valueOf();
+  const gameColumns$ = $(`${tableSelector} .game-column`);
+  const inputsByColumn = gameColumns$.map((columnIndex, column) =>
+    _($(column).find('input.score').get())
+      .groupBy((value, index) => (columnIndex * PLAYER_COUNT) + (index % PLAYER_COUNT))
+      .toArray()
+      .valueOf()
+  ).get();
   const inputObservablesByColumn = _.range(columnCount).map(columnIndex =>
     inputsByColumn[columnIndex].map(createObservableForNumberInputField)
   );
@@ -178,13 +171,11 @@ function observeScoreDifferences(upperSectionObservables, lowerSectionObservable
 }
 
 function bindRowScoreData(tableSelector, scoreObservables) {
-  $(`${tableSelector} tbody tr`).each((rowIndex, rowElement) => {
-    const scoreObservablePairs = _(scoreObservables).groupBy((value, index) => Math.floor(index / 2))
-      .toArray().valueOf();
-    scoreObservablePairs.forEach((scoreObservablePair, pairIndex) => {
+  $(`${tableSelector} .game-column`).each((gameIndex, gameColumn) => {
+    $(gameColumn).find('.score-container').each((rowIndex, rowElement) => {
       const rowScoreChangeObservable = Rx.Observable.combineLatest(
-        scoreObservablePair[0][rowIndex],
-        scoreObservablePair[1][rowIndex],
+        scoreObservables[gameIndex * PLAYER_COUNT][rowIndex],
+        scoreObservables[gameIndex * PLAYER_COUNT + 1][rowIndex],
         (score1, score2) => RowScoreChange(score1, score2)
       );
 
@@ -196,30 +187,30 @@ function bindRowScoreData(tableSelector, scoreObservables) {
 
       // Show score difference next to bigger score cell
       rowScoreChangeObservable.filter(isScore1Bigger)
-        .subscribe(showScoreDifference(rowElement, '.score-diff.player-1', pairIndex, score1MinusScore2));
+        .subscribe(showScoreDifference(rowElement, '.score-diff.player-1', score1MinusScore2));
       rowScoreChangeObservable.filter(isScore2Bigger)
-        .subscribe(showScoreDifference(rowElement, '.score-diff.player-2', pairIndex, score2MinusScore1));
+        .subscribe(showScoreDifference(rowElement, '.score-diff.player-2', score2MinusScore1));
 
       // Hide score difference cell next to score cell that is smaller or equal to the other one
       rowScoreChangeObservable.filter(not(isScore1Bigger))
-        .subscribe(hideScoreDifference(rowElement, '.score-diff.player-1', pairIndex));
+        .subscribe(hideScoreDifference(rowElement, '.score-diff.player-1'));
       rowScoreChangeObservable.filter(not(isScore2Bigger))
-        .subscribe(hideScoreDifference(rowElement, '.score-diff.player-2', pairIndex));
+        .subscribe(hideScoreDifference(rowElement, '.score-diff.player-2'));
     });
   });
 }
 
-function showScoreDifference(rowElement, diffElementSelector, diffElementIndex, scoreDiffCalculator) {
+function showScoreDifference(rowElement, diffElementSelector, scoreDiffCalculator) {
   return (change) => {
-    $(rowElement).find(diffElementSelector).slice(diffElementIndex, diffElementIndex + 1)
+    $(rowElement).find(diffElementSelector)
       .addClass('visible')
       .html(`+${scoreDiffCalculator(change)}`);
   };
 }
 
-function hideScoreDifference(rowElement, diffElementSelector, diffElementIndex) {
+function hideScoreDifference(rowElement, diffElementSelector) {
   return () => {
-    $(rowElement).find(diffElementSelector).slice(diffElementIndex, diffElementIndex + 1)
+    $(rowElement).find(diffElementSelector)
       .removeClass('visible');
   };
 }
@@ -235,22 +226,18 @@ function observeElementsHiddenAfterTransition() {
 }
 
 
-function addResetButtons(tableSelector, buttonCount) {
+function addResetButtons(tableSelector) {
   // Add buttons
-  const buttonCells = _(buttonCount).times(() =>
-    '<td class="reset" colspan="2"><a class="button no-select" title="Reset scores for this game">Reset</a></td>'
-  ).valueOf();
-  $(`${tableSelector} tbody`).append($('<tr>')
-    .append('<th>')
-    .append(buttonCells));
+  $(`${tableSelector} .game-column`)
+    .append('<a class="button reset no-select" title="Reset scores for this game">Reset</a>');
 
   // Add click event handlers to clear name and score inputs
-  $(`${tableSelector} td.reset .button`).each((index, element) => {
+  $(`${tableSelector} .button.reset`).each((index, element) => {
     Rx.Observable.fromEvent(element, 'click')
       .subscribe(() => {
-        $(`td.game-${index + 1} input.score`).val('')
+        $(`.game-${index + 1} input.score`).val('')
           .trigger('input');
-        $(`th.game-${index + 1} input.player`).val('');
+        $(`.game-${index + 1}.player`).val('');
 
         // For some reason triggering any event doesn't call the event listener,
         // so need to clear names manually from local storage

@@ -1,47 +1,46 @@
-<thead>
-  <tr>
-    <th></th>
-    {{#playerNames}}
-    <th class="game-{{gameIndex}} player-{{playerIndex}}">
-      <input type="text" class="player" placeholder="Name" value="{{name}}">
-    </th>
-    {{/playerNames}}
-  </tr>
-</thead>
-
-<tbody>
-  {{#scores}}
-  <tr>
-    <th class="description">
-      <div class="label">{{label}}</div>
+<div class="label-column">
+  <span class="empty"></span>
+  {{#labels}}
+  <div class="row">
+    <div class="label">{{label}}</div>
+    <div class="dice">
       {{#dice}}
       <img class="die" title="{{label}}" src="svg/{{.}}.svg">
       {{/dice}}
-    </th>
-    {{#games}}
-    <td class="game-{{gameIndex}} player-1">
+    </div>
+  </div>
+  {{/labels}}
+  <div class="row total">Total</div>
+</div>
+
+{{#games}}
+<div class="game-column">
+  <header class="game-header">
+    {{#playerNames}}
+    <input type="text" class="player game-{{gameIndex}} player-{{playerIndex}}" placeholder="Name" value="{{name}}">
+    {{/playerNames}}
+  </header>
+  {{#scores}}
+  <div class="score-container">
+    <span class="game-{{gameIndex}} player-1 player-score">
       <span class="score-diff player-1"></span>
       <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player1}}">
-    </td>
-    <td class="game-{{gameIndex}} player-2">
+    </span>
+    <span class="game-{{gameIndex}} player-2 player-score">
       <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player2}}">
       <span class="score-diff player-2"></span>
-    </td>
-    {{/games}}
-  </tr>
+    </span>
+  </div>
   {{/scores}}
-
-  <tr class="total">
-    <th>Total</th>
-    {{#games}}
-    <td class="player-1">
+  <div class="score-container">
+    <span class="player-1 player-score">
       <span class="score-diff player-1"></span>
       <input type="number" min="0" class="total" readonly>
-    </td>
-    <td class="player-2">
+    </span>
+    <span class="player-2 player-score">
       <input type="number" min="0" class="total" readonly>
       <span class="score-diff player-2"></span>
-    </td>
-    {{/games}}
-  </tr>
-</tbody>
+    </span>
+  </div>
+</div>
+{{/games}}
