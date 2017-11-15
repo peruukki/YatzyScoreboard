@@ -118,7 +118,7 @@ input {
 input.player {
   font-size: 0.7rem;
   text-align: center;
-  width: 100%;
+  flex: 1 1 auto;
 }
 input.score, input.total {
   text-align: right;
