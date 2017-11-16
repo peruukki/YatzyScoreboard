@@ -36,6 +36,14 @@ npm run build
 
 The bundled JavaScript file is included in the repository so that the scoreboard can be served easily on GitHub pages.
 
+## Deploying
+
+Push the current repository to GitHub pages:
+
+```
+./deploy.sh
+```
+
 ## Watching for JavaScript changes and re-building
 
 Bundle a minified JavaScript file on file changes:
