@@ -229,7 +229,7 @@ function observeElementsHiddenAfterTransition() {
 function addResetButtons(tableSelector) {
   // Add buttons
   $(`${tableSelector} .game-column`)
-    .append('<a class="button reset no-select" title="Reset scores for this game">Reset</a>');
+    .append('<button class="button reset" title="Reset scores for this game">Reset</button>');
 
   // Add click event handlers to clear name and score inputs
   $(`${tableSelector} .button.reset`).each((index, element) => {
