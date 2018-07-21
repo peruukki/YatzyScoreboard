@@ -63,7 +63,9 @@ function createSection(template, tableSelector, sectionName, rows) {
       ({ name: store.readName(gameIndex, playerIndex), playerIndex })),
     scores: rows.map((row, rowIndex) => ({
       player1: store.readScore(sectionName, gameIndex, 1, rowIndex + 1),
-      player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1)
+      player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1),
+      max: row.max,
+      step: row.step
     }))
   }));
   const labels = rows;
