@@ -17,6 +17,10 @@ h1 {
   text-align: center;
 }
 
+.hidden {
+  display: none;
+}
+
 .section {
   display: flex;
   margin-bottom: 0.5rem;
@@ -129,12 +133,12 @@ input.score, input.total {
 }
 
 .button {
-  display: inline-block;
+  display: block;
   cursor: pointer;
   background-color: black;
   color: white;
   font-size: 0.75rem;
-  margin-top: 0.5rem;
+  margin: 0.5rem auto 0;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   border: none;
@@ -145,6 +149,32 @@ input.score, input.total {
 .button:active {
   background-color: #eee;
   color: black;
+}
+
+.scoreboard-container::after {
+  content: '';
+  clear: both;
+  display: table;
+}
+
+.historical-data {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.historical-data-container {
+  display: inline-block;
+  text-align: left;
+}
+
+.score-info {
+  vertical-align: baseline;
+}
+.score-info__score {
+  font-weight: bold;
+  text-align: right;
 }
 
 #upper-section {

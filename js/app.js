@@ -22,17 +22,23 @@ const LOWER_SECTION_INPUTS = [
   Input('Yatzy', [6, 6, 6, 6, 6], 5, 80)
 ];
 
+const HIGHEST_SCORE_TYPE = 'high';
+const LOWEST_SCORE_TYPE = 'low';
+
 createScoreboard(addEventListeners);
 
 function createScoreboard(onReady) {
   $.get('templates/section.mustache', template => {
     createSection(template, '#upper-section', 'upper', UPPER_SECTION_INPUTS);
     createSection(template, '#lower-section', 'lower', LOWER_SECTION_INPUTS);
-    onReady();
+
+    $.get('templates/score-info.mustache', scoreInfoTemplate => {
+      onReady(scoreInfoTemplate);
+    });
   });
 }
 
-function addEventListeners() {
+function addEventListeners(scoreInfoTemplate) {
   observePlayerNameInput();
 
   const [upperSectionScores$, lowerSectionScores$] = observeScoreInput();
@@ -40,9 +46,15 @@ function addEventListeners() {
 
   observeElementsHiddenAfterTransition();
 
-  addResetButtons('#lower-section', GAME_COUNT);
+  addResetButtons('#lower-section');
+  const gameScores$ = addFinishButtons('#lower-section');
+
+  const { highestScore, lowestScore } = getInitialHistoricalData();
+  const historicalData$ = observeHistoricalData(gameScores$, highestScore, lowestScore);
+  renderHistoricalData(historicalData$, scoreInfoTemplate);
 
   storeScores(upperSectionScores$, lowerSectionScores$);
+  storeHistoricalData(historicalData$);
 }
 
 function Input(label, dice, step, max) {
@@ -72,6 +84,29 @@ function createSection(template, tableSelector, sectionName, rows) {
 
   const context = { games, labels };
   $(tableSelector).html(Mustache.render(template, context));
+}
+
+const formatDate = timestamp => new Date(timestamp)
+  .toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+function renderHistoricalData(historicalData$, template) {
+  historicalData$.subscribe(({ highestScore, lowestScore }) => {
+    renderScoreInfo(template, 'highest-score', 'Highest score', highestScore);
+    renderScoreInfo(template, 'lowest-score', 'Lowest score', lowestScore);
+  });
+}
+
+function renderScoreInfo(template, rowClassname, label, scoreInfo) {
+  const classname = scoreInfo ? rowClassname : `${rowClassname} hidden`;
+  const { score, timestamp, playerName } = scoreInfo || {};
+  const context = {
+    classname,
+    label,
+    score,
+    date: formatDate(timestamp),
+    playerName: playerName || 'anonymous player'
+  };
+  $(`.historical-data-container .${rowClassname}`).replaceWith(Mustache.render(template, context));
 }
 
 
@@ -228,10 +263,61 @@ function observeElementsHiddenAfterTransition() {
 }
 
 
+function getInitialHistoricalData() {
+  return {
+    highestScore: store.readHistoricalScore(HIGHEST_SCORE_TYPE),
+    lowestScore: store.readHistoricalScore(LOWEST_SCORE_TYPE)
+  };
+}
+
+function observeHistoricalData(gameScores$, initialHighestScore, initialLowestScore) {
+  const initiaData$ = Rx.Observable.just({ highestScore: initialHighestScore, lowestScore: initialLowestScore });
+  const updatedData$ = gameScores$.scan(
+    ({ highestScore, lowestScore }, gameScores) => {
+      gameScores.filter(({ score }) => !!score)
+        .forEach(({ score, playerName }) => {
+          if (!highestScore || score > highestScore.score) {
+            highestScore = { score, playerName, timestamp: Date.now() };
+          }
+          if (!lowestScore || score < lowestScore.score) {
+            lowestScore = { score, playerName, timestamp: Date.now() };
+          }
+        });
+      return { highestScore, lowestScore };
+    },
+    { highestScore: initialHighestScore, lowestScore: initialLowestScore }
+  );
+
+  return Rx.Observable.merge(initiaData$, updatedData$)
+    .distinctUntilChanged();
+}
+
+
+function addFinishButtons(tableSelector) {
+  // Add buttons
+  $(`${tableSelector} .button-container`)
+    .append('<button class="button finish" title="Mark this game as finished">Finish game</button>');
+
+  // Create a stream of game scores
+  return Rx.Observable.merge(
+    ...$(`${tableSelector} .button.finish`).map((gameIndex, element) =>
+      Rx.Observable.fromEvent(element, 'click').map(() => {
+        const totalInputs = $(`${tableSelector} input.total`);
+        const playerNameInputs = $(`${tableSelector} input.player`);
+
+        return _.range(PLAYER_COUNT).map(playerIndex => ({
+          score: +totalInputs[gameIndex * PLAYER_COUNT + playerIndex].value || 0,
+          playerName: playerNameInputs[gameIndex * PLAYER_COUNT + playerIndex].value
+        }));
+      })
+    )
+  );
+}
+
 function addResetButtons(tableSelector) {
   // Add buttons
-  $(`${tableSelector} .game-column`)
-    .append('<button class="button reset" title="Reset scores for this game">Reset</button>');
+  $(`${tableSelector} .button-container`)
+    .append('<button class="button reset" title="Reset scores for this game">Reset scores</button>');
 
   // Add click event handlers to clear name and score inputs
   $(`${tableSelector} .button.reset`).each((index, element) => {
@@ -266,5 +352,16 @@ function storeSectionScores(sectionScores$, sectionName) {
         store.storeScore(sectionName, score, gameIndex, playerIndex, rowIndex + 1);
       });
     });
+  });
+}
+
+function storeHistoricalData(historicalData$) {
+  historicalData$.subscribe(({ highestScore, lowestScore }) => {
+    if (highestScore) {
+      store.storeHistoricalScore(HIGHEST_SCORE_TYPE, highestScore);
+    }
+    if (lowestScore) {
+      store.storeHistoricalScore(LOWEST_SCORE_TYPE, lowestScore);
+    }
   });
 }

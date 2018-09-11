@@ -4,12 +4,15 @@ export default {
   storeName,
   readName,
   storeScore,
-  readScore
+  readScore,
+  storeHistoricalScore,
+  readHistoricalScore
 };
 
 const getNameKey = (gameIndex, playerIndex) => `name-${gameIndex}-${playerIndex}`;
 const getScoreKey = (section, gameIndex, playerIndex, rowIndex) =>
   `score-${section}-${gameIndex}-${playerIndex}-${rowIndex}`;
+const getHistoricalScoreKey = type => `historical-${type}`;
 
 export function storeName(name, gameIndex, playerIndex) {
   store(getNameKey(gameIndex, playerIndex), name);
@@ -23,6 +26,17 @@ export function storeScore(section, score, gameIndex, playerIndex, rowIndex) {
 }
 export function readScore(section, gameIndex, playerIndex, rowIndex) {
   return read(getScoreKey(section, gameIndex, playerIndex, rowIndex));
+}
+
+export function storeHistoricalScore(type, { score, playerName, timestamp }) {
+  store(getHistoricalScoreKey(type), JSON.stringify({ score, playerName, timestamp }));
+}
+export function readHistoricalScore(type) {
+  const historicalScoreString = read(getHistoricalScoreKey(type));
+  if (!historicalScoreString) {
+    return null;
+  }
+  return JSON.parse(historicalScoreString);
 }
 
 function store(key, value) {
