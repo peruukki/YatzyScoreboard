@@ -1,7 +1,7 @@
 # Yatzy Scoreboard
 
-Keep track of your [Yatzy](http://en.wikipedia.org/wiki/Yatzy) game scores in the browser.
-[Try it.](http://peruukki.github.io/YatzyScoreboard/)
+Keep track of your [Yatzy](https://en.wikipedia.org/wiki/Yatzy) game scores in the browser.
+[Try it.](https://peruukki.github.io/YatzyScoreboard/)
 
 I was running out of Yatzy scoreboard cards again, and making new ones is always a daunting task (I can never get the
 lines straight!). So I decided to make a digital one, as it can also count the score totals for you, which is another
@@ -60,7 +60,7 @@ npm run watch-debug
 
 ## Linting
 
-Lint the JavaScript with [ESLint](http://eslint.org/):
+Lint the JavaScript with [ESLint](https://eslint.org/):
 
 ```
 npm run lint
@@ -79,4 +79,4 @@ MIT
 ## Acknowledgements
 
 This project is a grateful recipient of the
-[Futurice Open Source sponsorship program](http://futurice.com/blog/sponsoring-free-time-open-source-activities?utm_source=github&utm_medium=spice).
+[Futurice Open Source sponsorship program](https://futurice.com/blog/sponsoring-free-time-open-source-activities?utm_source=github&utm_medium=spice).
