@@ -133,7 +133,7 @@ function observePlayerNameInput() {
 }
 
 function name$(inputElement) {
-  return Rx.Observable.fromEvent(inputElement, 'keyup')
+  return Rx.Observable.fromEvent(inputElement, 'input')
     .map(e => e.target.value)
     .distinctUntilChanged();
 }
