@@ -298,9 +298,14 @@ function addFinishButtons(tableSelector) {
   $(`${tableSelector} .button-container`)
     .append('<button class="button finish" title="Mark this game as finished">Finish game</button>');
 
+  const addedButtons$ = $(`${tableSelector} .button.finish`);
+
+  // Add visual click indicators
+  addedButtons$.each((index, element) => visualizeButtonClick(element));
+
   // Create a stream of game scores
   return Rx.Observable.merge(
-    ...$(`${tableSelector} .button.finish`).map((gameIndex, element) =>
+    ...addedButtons$.map((gameIndex, element) =>
       Rx.Observable.fromEvent(element, 'click').map(() => {
         const totalInputs = $(`${tableSelector} input.total`);
         const playerNameInputs = $(`${tableSelector} input.player`);
@@ -319,8 +324,13 @@ function addResetButtons(tableSelector) {
   $(`${tableSelector} .button-container`)
     .append('<button class="button reset" title="Reset scores for this game">Reset scores</button>');
 
+  const addedButtons$ = $(`${tableSelector} .button.reset`);
+
+  // Add visual click indicators
+  addedButtons$.each((index, element) => visualizeButtonClick(element));
+
   // Add click event handlers to clear name and score inputs
-  $(`${tableSelector} .button.reset`).each((index, element) => {
+  addedButtons$.each((index, element) => {
     Rx.Observable.fromEvent(element, 'click')
       .subscribe(() => {
         $(`.game-${index + 1} input.score`).val('')
@@ -333,6 +343,13 @@ function addResetButtons(tableSelector) {
           store.storeName('', index + 1, playerIndex);
         });
       });
+  });
+}
+
+function visualizeButtonClick(element) {
+  element.addEventListener('click', () => {
+    $(element).addClass('active');
+    setTimeout(() => $(element).removeClass('active'), 100);
   });
 }
 

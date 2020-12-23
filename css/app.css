@@ -146,7 +146,8 @@ input.score, input.total {
 .button:hover {
   background-color: #222;
 }
-.button:active {
+.button:active,
+.button.active {
   background-color: #eee;
   color: black;
 }
