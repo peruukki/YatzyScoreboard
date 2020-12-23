@@ -1,13 +1,11 @@
 {
-  "ecmaFeatures": {
-    "modules": true
-  },
   "env": {
     "browser": true,
     "es6": true,
     "node": true
   },
   "extends": "eslint:recommended",
+  "parser": "babel-eslint",
   "rules": {
     "new-cap": [2, { "capIsNew": false }],
     "no-use-before-define": [2, "nofunc"],
