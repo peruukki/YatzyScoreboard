@@ -42,7 +42,7 @@
     "eslint-watch": "^7.0.0",
     "http-server": "^0.8.5",
     "uglifyify": "^3.0.1",
-    "watchify": "^3.6.0"
+    "watchify": "^3.11.1"
   },
   "dependencies": {
     "jquery": "^3.3.1",
