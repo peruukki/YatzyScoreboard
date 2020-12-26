@@ -20,11 +20,14 @@ Then go to `http://localhost:8000` with your browser to see the scoreboard.
 
 ## Serving the page locally
 
-Start a local HTTP server serving scoreboard page:
+Start a local HTTP server serving the scoreboard page:
 
 ```
 npm run server
 ```
+
+NOTE: This command only runs the HTTP server. You likely also need to build the served JavaScript bundle in another
+command prompt using `npm run build`, `npm run watch` or `npm run watch-debug`, see below.
 
 ## Building
 
