@@ -6,6 +6,7 @@ export default {
   storeScore,
   readScore,
   storeHistoricalScore,
+  removeHistoricalScore,
   readHistoricalScore
 };
 
@@ -30,6 +31,9 @@ export function readScore(section, gameIndex, playerIndex, rowIndex) {
 
 export function storeHistoricalScore(type, { score, playerName, timestamp }) {
   store(getHistoricalScoreKey(type), JSON.stringify({ score, playerName, timestamp }));
+}
+export function removeHistoricalScore(type) {
+  store(getHistoricalScoreKey(type, undefined));
 }
 export function readHistoricalScore(type) {
   const historicalScoreString = read(getHistoricalScoreKey(type));

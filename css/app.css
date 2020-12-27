@@ -163,7 +163,7 @@ input.score, input.total {
 
 .historical-data-container {
   display: inline-grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(5, auto);
   column-gap: 0.3em;
   row-gap: 0.15rem;
   justify-items: start;
@@ -179,6 +179,14 @@ input.score, input.total {
 .score-info__score {
   justify-self: end;
   font-weight: bold;
+}
+
+.clear-score-info {
+  font-size: 0.5rem;
+  padding: 0.125rem 0.25rem;
+  margin-top: 0;
+  margin-left: 0.25rem;
+  align-self: center;
 }
 
 #upper-section {

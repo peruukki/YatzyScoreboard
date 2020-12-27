@@ -107,7 +107,14 @@ function renderScoreInfo(template, rowClassname, label, scoreInfo) {
     date: formatDate(timestamp),
     playerName: playerName || 'anonymous player'
   };
-  $(`.historical-data-container .${rowClassname}`).replaceWith(Mustache.render(template, context));
+  $(`.historical-data-container .score-info.${rowClassname}`).replaceWith(Mustache.render(template, context));
+
+  const resetButton$ = $(`.historical-data-container .clear-score-info.${rowClassname}`);
+  if (scoreInfo) {
+    resetButton$.removeClass('hidden');
+  } else {
+    resetButton$.addClass('hidden');
+  }
 }
 
 
@@ -272,24 +279,36 @@ function getInitialHistoricalData() {
 }
 
 function observeHistoricalData(gameScores$, initialHighestScore, initialLowestScore) {
-  const initiaData$ = Rx.Observable.just({ highestScore: initialHighestScore, lowestScore: initialLowestScore });
-  const updatedData$ = gameScores$.scan(
-    ({ highestScore, lowestScore }, gameScores) => {
+  const highestScore$ = createHistoricalScoreObservable(gameScores$, initialHighestScore, 'highest-score',
+    (score, historicalScore) => score > historicalScore);
+  const lowestScore$ = createHistoricalScoreObservable(gameScores$, initialLowestScore, 'lowest-score',
+    (score, historicalScore) => score < historicalScore);
+  return Rx.Observable.combineLatest(
+    highestScore$,
+    lowestScore$,
+    (highestScore, lowestScore) => ({ highestScore, lowestScore })
+  );
+}
+
+function createHistoricalScoreObservable(gameScores$, initialScore, clearButtonClassName, shouldUpdateHistoricalScoreFn) {
+  const clear$ = Rx.Observable.fromEvent($(`.clear-score-info.${clearButtonClassName}`), 'click')
+    .map(() => null);
+  return Rx.Observable.merge(clear$, gameScores$)
+    .scan((historicalScore, gameScores) => {
+      if (!gameScores) {
+        return gameScores;
+      }
       gameScores.filter(({ score }) => !!score)
         .forEach(({ score, playerName }) => {
-          if (!highestScore || score > highestScore.score) {
-            highestScore = { score, playerName, timestamp: Date.now() };
-          }
-          if (!lowestScore || score < lowestScore.score) {
-            lowestScore = { score, playerName, timestamp: Date.now() };
+          if (!historicalScore || shouldUpdateHistoricalScoreFn(score, historicalScore.score)) {
+            historicalScore = { score, playerName, timestamp: Date.now() };
           }
         });
-      return { highestScore, lowestScore };
+      return historicalScore;
     },
-    { highestScore: initialHighestScore, lowestScore: initialLowestScore }
-  );
-
-  return Rx.Observable.merge(initiaData$, updatedData$)
+    initialScore
+  )
+    .startWith(initialScore)
     .distinctUntilChanged();
 }
 
@@ -364,9 +383,13 @@ function storeHistoricalData(historicalData$) {
   historicalData$.subscribe(({ highestScore, lowestScore }) => {
     if (highestScore) {
       store.storeHistoricalScore(HIGHEST_SCORE_TYPE, highestScore);
+    } else {
+      store.removeHistoricalScore(HIGHEST_SCORE_TYPE);
     }
     if (lowestScore) {
       store.storeHistoricalScore(LOWEST_SCORE_TYPE, lowestScore);
+    } else {
+      store.removeHistoricalScore(LOWEST_SCORE_TYPE);
     }
   });
 }
