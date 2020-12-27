@@ -46,8 +46,8 @@ function addEventListeners(scoreInfoTemplate) {
 
   observeElementsHiddenAfterTransition();
 
-  addResetScoresButtons('#lower-section');
   const gameScores$ = addFinishButtons('#lower-section');
+  addResetScoresButtons('#lower-section');
 
   const { highestScore, lowestScore } = getInitialHistoricalData();
   const historicalData$ = observeHistoricalData(gameScores$, highestScore, lowestScore);
