@@ -55,6 +55,7 @@ function addEventListeners(scoreInfoTemplate) {
 
   storeScores(upperSectionScores$, lowerSectionScores$);
   storeHistoricalData(historicalData$);
+  visualizeButtonClicks();
 }
 
 function Input(label, dice, step, max) {
@@ -300,9 +301,6 @@ function addFinishButtons(tableSelector) {
 
   const addedButtons$ = $(`${tableSelector} .button.finish`);
 
-  // Add visual click indicators
-  addedButtons$.each((index, element) => visualizeButtonClick(element));
-
   // Create a stream of game scores
   return Rx.Observable.merge(
     ...addedButtons$.map((gameIndex, element) =>
@@ -326,9 +324,6 @@ function addResetButtons(tableSelector) {
 
   const addedButtons$ = $(`${tableSelector} .button.reset`);
 
-  // Add visual click indicators
-  addedButtons$.each((index, element) => visualizeButtonClick(element));
-
   // Add click event handlers to clear name and score inputs
   addedButtons$.each((index, element) => {
     Rx.Observable.fromEvent(element, 'click')
@@ -343,13 +338,6 @@ function addResetButtons(tableSelector) {
           store.storeName('', index + 1, playerIndex);
         });
       });
-  });
-}
-
-function visualizeButtonClick(element) {
-  element.addEventListener('click', () => {
-    $(element).addClass('active');
-    setTimeout(() => $(element).removeClass('active'), 100);
   });
 }
 
@@ -380,5 +368,14 @@ function storeHistoricalData(historicalData$) {
     if (lowestScore) {
       store.storeHistoricalScore(LOWEST_SCORE_TYPE, lowestScore);
     }
+  });
+}
+
+function visualizeButtonClicks() {
+  $('button').each((index, element) => {
+    element.addEventListener('click', () => {
+      $(element).addClass('active');
+      setTimeout(() => $(element).removeClass('active'), 100);
+    });
   });
 }
