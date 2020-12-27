@@ -46,7 +46,7 @@ function addEventListeners(scoreInfoTemplate) {
 
   observeElementsHiddenAfterTransition();
 
-  addResetButtons('#lower-section');
+  addResetScoresButtons('#lower-section');
   const gameScores$ = addFinishButtons('#lower-section');
 
   const { highestScore, lowestScore } = getInitialHistoricalData();
@@ -317,7 +317,7 @@ function addFinishButtons(tableSelector) {
   );
 }
 
-function addResetButtons(tableSelector) {
+function addResetScoresButtons(tableSelector) {
   // Add buttons
   $(`${tableSelector} .button-container`)
     .append('<button class="button reset" title="Reset scores for this game">Reset scores</button>');
