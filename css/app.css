@@ -17,10 +17,6 @@ h1 {
   text-align: center;
 }
 
-.hidden {
-  display: none;
-}
-
 .section {
   display: flex;
   margin-bottom: 0.5rem;
@@ -166,16 +162,23 @@ input.score, input.total {
 }
 
 .historical-data-container {
-  display: inline-block;
-  text-align: left;
+  display: inline-grid;
+  grid-template-columns: repeat(4, auto);
+  column-gap: 0.3em;
+  row-gap: 0.15rem;
+  justify-items: start;
+  align-items: baseline;
 }
 
 .score-info {
-  vertical-align: baseline;
+  display: contents;
+}
+.score-info__label {
+  justify-self: end;
 }
 .score-info__score {
+  justify-self: end;
   font-weight: bold;
-  text-align: right;
 }
 
 #upper-section {
@@ -193,6 +196,10 @@ input.score, input.total {
 .game-column .score-container:first-of-type,
 .game-column .score-container:last-of-type {
   border-top: solid 1px gray;
+}
+
+.hidden {
+  display: none;
 }
 
 @media screen and (max-width: 1400px)
