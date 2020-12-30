@@ -29,8 +29,8 @@ createScoreboard(addEventListeners);
 
 function createScoreboard(onReady) {
   $.get('templates/section.mustache', template => {
-    createSection(template, '#upper-section', 'upper', UPPER_SECTION_INPUTS);
-    createSection(template, '#lower-section', 'lower', LOWER_SECTION_INPUTS);
+    createSection(template, '#upper-section', 'upper', 'Upper section points total', UPPER_SECTION_INPUTS);
+    createSection(template, '#lower-section', 'lower', 'All points total', LOWER_SECTION_INPUTS);
 
     $.get('templates/score-info.mustache', scoreInfoTemplate => {
       onReady(scoreInfoTemplate);
@@ -66,7 +66,7 @@ function RowScoreChange(score1, score2) {
   return { score1, score2 };
 }
 
-function createSection(template, tableSelector, sectionName, rows) {
+function createSection(template, tableSelector, sectionName, totalLabel, rows) {
   const gameRange = _.range(1, GAME_COUNT + 1);
   const playerRange = _.range(1, PLAYER_COUNT + 1);
 
@@ -77,13 +77,14 @@ function createSection(template, tableSelector, sectionName, rows) {
     scores: rows.map((row, rowIndex) => ({
       player1: store.readScore(sectionName, gameIndex, 1, rowIndex + 1),
       player2: store.readScore(sectionName, gameIndex, 2, rowIndex + 1),
+      label: row.label,
       max: row.max,
       step: row.step
     }))
   }));
   const labels = rows;
 
-  const context = { games, labels };
+  const context = { games, labels, totalLabel };
   $(tableSelector).html(Mustache.render(template, context));
 }
 

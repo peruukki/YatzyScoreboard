@@ -17,17 +17,33 @@
 <div class="game-column">
   <header class="game-header">
     {{#playerNames}}
-    <input type="text" class="player game-{{gameIndex}} player-{{playerIndex}}" placeholder="Name" value="{{name}}">
+    <input type="text"
+           class="player game-{{gameIndex}} player-{{playerIndex}}"
+           placeholder="Name"
+           value="{{name}}"
+           aria-label="Name of player {{playerIndex}} (game {{gameIndex}})">
     {{/playerNames}}
   </header>
   {{#scores}}
   <div class="score-container">
     <span class="game-{{gameIndex}} player-1 player-score">
       <span class="score-diff player-1"></span>
-      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player1}}">
+      <input type="number"
+             min="0"
+             max="{{max}}"
+             step="{{step}}"
+             class="score"
+             value="{{player1}}"
+             aria-label="{{label}} points for player 1 (game {{gameIndex}})">
     </span>
     <span class="game-{{gameIndex}} player-2 player-score">
-      <input type="number" min="0" max="{{max}}" step="{{step}}" class="score" value="{{player2}}">
+      <input type="number"
+             min="0"
+             max="{{max}}"
+             step="{{step}}"
+             class="score"
+             value="{{player2}}"
+             aria-label="{{label}} points for player 2 (game {{gameIndex}})">
       <span class="score-diff player-2"></span>
     </span>
   </div>
@@ -35,10 +51,10 @@
   <div class="score-container">
     <span class="player-1 player-score">
       <span class="score-diff player-1"></span>
-      <input type="number" min="0" class="total" readonly>
+      <input type="number" min="0" class="total" aria-label="{{totalLabel}} for player 1 (game {{gameIndex}})" readonly>
     </span>
     <span class="player-2 player-score">
-      <input type="number" min="0" class="total" readonly>
+      <input type="number" min="0" class="total" aria-label="{{totalLabel}} for player 2 (game {{gameIndex}})" readonly>
       <span class="score-diff player-2"></span>
     </span>
   </div>
