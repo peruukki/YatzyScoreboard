@@ -316,8 +316,8 @@ function createHistoricalScoreObservable(gameScores$, initialScore, clearButtonC
 
 function addFinishButtons(tableSelector) {
   // Add buttons
-  $(`${tableSelector} .button-container`)
-    .append('<button class="button finish" title="Mark this game as finished">Finish game</button>');
+  $(`${tableSelector} .button-container`).each((gameIndex, element) =>
+    $(element).append(`<button class="button finish" aria-label="Finish game ${gameIndex + 1}" title="Mark this game as finished">Finish game</button>`));
 
   const addedButtons$ = $(`${tableSelector} .button.finish`);
 
@@ -339,8 +339,8 @@ function addFinishButtons(tableSelector) {
 
 function addResetScoresButtons(tableSelector) {
   // Add buttons
-  $(`${tableSelector} .button-container`)
-    .append('<button class="button reset" title="Reset scores for this game">Reset scores</button>');
+  $(`${tableSelector} .button-container`).each((gameIndex, element) =>
+    $(element).append(`<button class="button reset" aria-label="Reset scores of game ${gameIndex + 1}" title="Reset scores for this game">Reset scores</button>`));
 
   const addedButtons$ = $(`${tableSelector} .button.reset`);
 
