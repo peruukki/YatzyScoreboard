@@ -316,8 +316,9 @@ function createHistoricalScoreObservable(gameScores$, initialScore, clearButtonC
 
 function addFinishButtons(tableSelector) {
   // Add buttons
+  const description = 'the game\'s scores may be saved to all-time scores.';
   $(`${tableSelector} .button-container`).each((gameIndex, element) =>
-    $(element).append(`<button class="button finish" aria-label="Finish game ${gameIndex + 1}" title="Mark this game as finished">Finish game</button>`));
+    $(element).append(`<button class="button finish" aria-label="Finish game ${gameIndex + 1}: ${description}" title="Finish the game: ${description}">Finish game</button>`));
 
   const addedButtons$ = $(`${tableSelector} .button.finish`);
 
